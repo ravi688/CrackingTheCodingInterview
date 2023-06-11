@@ -217,7 +217,7 @@ static int get_num_pairs(int* array, int length, int diff)
 
 
 	/* time complexity: log(n - 1) + log(n - 2) + log(n - 3) + log(1) = 
-						log(1) + log(2) + log(3) + ... + log(n - 1) = O(log(n - 1))
+						log(1) + log(2) + log(3) + ... + log(n - 1) = O((n - 1)log(n - 1))
 	*/
 
 	/* count the number of pairs */

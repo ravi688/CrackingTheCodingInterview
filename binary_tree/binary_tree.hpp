@@ -85,6 +85,9 @@ public:
 		delete root;
 	}
 
+	operator BinaryNode<SatelliteDataType>*() { return root; }
+	operator BinaryNode<SatelliteDataType>&() { return *root; }
+
 	BinaryNode<SatelliteDataType>* getRoot() { return root; }
 	SatelliteDataType getSum()
 	{

@@ -20,5 +20,12 @@ int main(int argc, const char* argv[])
 	BinaryTree<int> tree;
 	BuildBinaryTree(tree);
 	std::cout << "Sum: " << tree.getSum() << std::endl;
+
+
+	// calls the BinaryTree<int>::operator BinaryNode<int>&() overload
+	BinaryNode<int>& node = tree;
+	// calls the BinaryTree<int>::operator BinaryNode<int>*() overload
+	BinaryNode<int>* nodePtr = tree;
+	
 	return 0;
 }

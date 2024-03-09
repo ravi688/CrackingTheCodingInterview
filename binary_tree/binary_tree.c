@@ -78,43 +78,60 @@ void binary_node_traverse_preorder(binary_node_t* node, void (*callback)(binary_
 		binary_node_traverse_preorder(right, callback, userData);
 }
 
-void binary_node_traverse_inorder(binary_node_t* node, void (*callback)(binary_node_t* node, void* userData), void* userData)
+void binary_node_traverse_postorder(binary_node_t* node, void (*callback)(binary_node_t* node, void* userData), void* userData)
 {
-	// In order traversal:
+	// Post order traversal:
 	//  	Visits the left most first recursively
 	//		Then the right recursively
 	//		Then the parent of the left most recursively
 
 	binary_node_t* left = binary_node_get_left(node);
 	if(left != NULL)
-		binary_node_traverse_inorder(left, callback, userData);
+		binary_node_traverse_postorder(left, callback, userData);
 
 	binary_node_t* right = binary_node_get_right(node);
 	if(right != NULL)
-		binary_node_traverse_inorder(right, callback, userData);
+		binary_node_traverse_postorder(right, callback, userData);
 
 	callback(node, userData);
 }
 
-void binary_node_traverse_postorder(binary_node_t* node, void (*callback)(binary_node_t* node, void* userData), void* userData)
+void binary_node_traverse_inorder(binary_node_t* node, void (*callback)(binary_node_t* node, void* userData), void* userData)
 {
-	// Post order traversal:
+	// In order traversal:
 	// 		Visits the left most first recursively
  	// 		Then the parent of that left most recursively
  	// 		Then the right recursively
 
  	binary_node_t* left = binary_node_get_left(node);
  	if(left != NULL)
- 		binary_node_traverse_postorder(left, callback, userData);
+ 		binary_node_traverse_inorder(left, callback, userData);
 
  	callback(node, userData);
 
  	binary_node_t* right = binary_node_get_right(node);
  	if(right != NULL)
- 		binary_node_traverse_postorder(right, callback, userData);
+ 		binary_node_traverse_inorder(right, callback, userData);
 }
 
-void binary_search_tree_insert(binary_tree_t* tree, void* value, int (*compare)(void* value, void* compare_value))
+binary_node_t* binary_search_tree_insert(binary_tree_t* tree, void* value, comparer_t compare_callback, void* userData)
 {
-	
+	if(tree == NULL)
+		return binary_node_create(value, NULL, NULL);
+
+	void* this_value = binary_node_get_satellite_data(tree);
+	if(compare_callback(value, this_value, userData) <= 0)
+	{
+		binary_node_t* left = binary_node_get_left(tree);
+		if(left != NULL)
+			return binary_search_tree_insert(left, value, compare_callback, userData);
+		return binary_node_create_left(tree, value);
+	}
+	else
+	{
+		binary_node_t* right = binary_node_get_right(tree);
+		if(right != NULL)
+			return binary_search_tree_insert(right, value, compare_callback, userData);
+		return binary_node_create_right(tree, value);
+	}
 }

@@ -40,4 +40,8 @@ void binary_node_traverse_preorder(binary_node_t* node, void (*callback)(binary_
 void binary_node_traverse_inorder(binary_node_t* node, void (*callback)(binary_node_t* node, void* userData), void* userData);
 void binary_node_traverse_postorder(binary_node_t* node, void (*callback)(binary_node_t* node, void* userData), void* userData);
 
-void binary_search_tree_insert(binary_tree_t* tree, void* value, int (*compare)(void* value, void* compare_value));
+typedef int (*comparer_t)(void* value, void* compare_value, void* userData);
+#define COMPARE_CALLBACK(callback) (comparer_t)(callback)
+binary_node_t* binary_search_tree_insert(binary_tree_t* tree, void* value, comparer_t compare_callback, void* userData);
+void binary_search_tree_remove(binary_tree_t* tree, void* value, comparer_t compare_callback, void* userData);
+binary_node_t* binary_search_tree_search(binary_node_t* tree, void* value, comparer_t compare_callback, void* userData);

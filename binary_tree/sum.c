@@ -39,11 +39,37 @@ static binary_tree_t* build_binary_tree()
 	return n0;
 }
 
+
+
+static int compare_ints(int* value, const int* compare_value)
+{
+	if((*value) == (*compare_value))
+		return 0;
+	else if((*value) > *(compare_value))
+		return 1;
+	else
+		return -1;
+}
+
+static binary_tree_t* build_binary_search_tree(const int* array, int array_size)
+{
+	int i = 0;
+	binary_node_t* root = binary_search_tree_insert(NULL, create_int(array[i++]), COMPARE_CALLBACK(compare_ints), NULL);
+	while(i < array_size)
+	{
+		(void)binary_search_tree_insert(root, create_int(array[i]), COMPARE_CALLBACK(compare_ints), NULL);
+		++i;
+	}
+	return root;
+}
+
 static void print_node_as_int(binary_node_t* node, void* userData)
 {
 	int value = binary_node_get_satellite_data_as_int(node);
 	printf("%d ", value);
 }
+
+#define ARRAY_SIZE(__array__) sizeof(__array__) / sizeof(__array__[0])
 
 int main(const char* argv[], int arg)
 {
@@ -51,6 +77,24 @@ int main(const char* argv[], int arg)
 	printf("PreOrder: "); binary_node_traverse_preorder(tree, TRAVERSE_CALLBACK(print_node_as_int), NULL); puts("");
 	printf("InOrder: "); binary_node_traverse_inorder(tree, TRAVERSE_CALLBACK(print_node_as_int), NULL); puts("");
 	printf("PostOrder: "); binary_node_traverse_postorder(tree, TRAVERSE_CALLBACK(print_node_as_int), NULL); puts("");
+	binary_tree_destroy(tree, DESTROY_CALLBACK(destroy_int), NULL);
+
+	int array[] = { 5, 6, 2, 67, 100, 4, -1 };
+
+
+	/*
+				5
+			  /   \
+			 2     6
+		    / \     \
+		 -1    4     67
+		              \
+		               100
+
+
+	 */
+	tree = build_binary_search_tree(array, ARRAY_SIZE(array));
+	printf("BST InOrder: "); binary_node_traverse_inorder(tree, TRAVERSE_CALLBACK(print_node_as_int), NULL); puts("");
 	binary_tree_destroy(tree, DESTROY_CALLBACK(destroy_int), NULL);
 	return 0;
 }

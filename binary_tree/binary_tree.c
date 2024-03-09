@@ -1,5 +1,6 @@
 
 #include "binary_tree.h"
+#include "../static_queue.h"
 
 #include <stdlib.h>
 #include <string.h> // memset
@@ -227,11 +228,56 @@ void binary_node_traverse_level_order(binary_node_t* node, void (*callback)(bina
 
  	for each level of depth [0, floor(log2(n))]
  		print nodes which are at level 'level'
+
+
+ 	Where is the inefficiency?
+ 			We are traversing the rest of the initial tree redundantly (or repeatedly) for each level printing
+
+ 	How can we eliminate that repeate work?
+ 			By preserving the state of the traversed nodes - use stack or queues etc.
+
+
+ 	Second solution:
+
+ 	 queue = 0
+	
+	 add root node in the queue
+
+	 while queue is not empty:
+ 	 	node = pop from queue's back
+ 	 	print the node
+ 	 	for each child of the node :
+ 	 		add in the queue's front
+
  	*/
 
-	int height = binary_node_get_height(node);	
+	// Time Complexity: O(n + sum{i=0, i=ceil(log2(n)), 2^i - 1})
+	int height = binary_node_get_height(node);
 	for(int i = 0; i <= height; i++)
 		binary_node_traverse_level(node, i, callback, userData);
+}
+
+void binary_node_traverse_level_order2(binary_node_t* node, void (*callback)(binary_node_t* node, void* userData), void* userData)
+{
+	int height = binary_node_get_height(node);
+	static_queue_t* queue = static_queue_create(sizeof(binary_node_t*), (1 << (height + 1)) - 1);
+
+	static_queue_push(queue, &node);
+
+	while(!static_queue_is_empty(queue))
+	{
+		binary_node_t* _node;
+		bool result = static_queue_pop(queue, &_node);
+		assert(result);
+		callback(_node, userData);
+		binary_node_t* left = binary_node_get_left(_node);
+		if(left != NULL)
+			static_queue_push(queue, &left);
+		binary_node_t* right = binary_node_get_right(_node);
+		if(right != NULL)
+			static_queue_push(queue, &right);
+	}
+	static_queue_destroy(queue);
 }
 
 static void accumulate_count(binary_node_t* node, int* count)

@@ -26,6 +26,8 @@ int main(int argc, const char* argv[])
 	BinaryNode<int>& node = tree;
 	// calls the BinaryTree<int>::operator BinaryNode<int>*() overload
 	BinaryNode<int>* nodePtr = tree;
-	
+
+	int&& rootValue = static_cast<int>(tree);
+
 	return 0;
 }

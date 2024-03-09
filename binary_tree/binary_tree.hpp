@@ -3,6 +3,7 @@
 #include <optional> // std::optional
 
 #include <stdint.h>
+#include <assert.h>
 typedef uint64_t size_t;
 
 template<typename SatelliteDataType>
@@ -43,6 +44,12 @@ public:
 
 	void setSatelliteData(const SatelliteDataType& data) { satellite_data = data; }
 	std::optional<SatelliteDataType>& getSatelliteData() const { return satellite_data; }
+
+	explicit operator SatelliteDataType()
+	{
+		assert(satellite_data.has_value() && "Failed to cast BinaryNode<SatelliteDataType> to SatelliteDataType& as the node doesn't contain such value");
+		return *satellite_data;
+	}
 
 	void* operator new(size_t size)
 	{
@@ -87,6 +94,7 @@ public:
 
 	operator BinaryNode<SatelliteDataType>*() { return root; }
 	operator BinaryNode<SatelliteDataType>&() { return *root; }
+	explicit operator SatelliteDataType() { return static_cast<SatelliteDataType>(*root); }
 
 	BinaryNode<SatelliteDataType>* getRoot() { return root; }
 	SatelliteDataType getSum()

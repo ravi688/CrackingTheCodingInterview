@@ -83,18 +83,52 @@ int main(const char* argv[], int arg)
 
 
 	/*
-				5
-			  /   \
-			 2     6
-		    / \     \
-		 -1    4     67
+				5 								    6
+			  /   \  							  /   \
+			 2     6 		 					 2     67
+		    / \     \  			---->     		/  \    \
+		 -1    4     67 					   -1  4    100
 		              \
 		               100
+		
+		-1 4 100
 
-
+		 -1                           4                       100
+		   \        Rotation        /  \     Rotation        /
+		    4        ---->         -1   100  ----->         4
+		     \                                             /
+		     100                                          -1
 	 */
 	tree = build_binary_search_tree(array, ARRAY_SIZE(array));
 	printf("BST InOrder: "); binary_node_traverse_inorder(tree, TRAVERSE_CALLBACK(print_node_as_int), NULL); puts("");
-	binary_tree_destroy(tree, DESTROY_CALLBACK(destroy_int), NULL);
+	
+	int search_value = -1;
+	if(binary_search_tree_search(tree, &search_value, COMPARE_CALLBACK(compare_ints), NULL) != NULL)
+		printf("BST contains %d\n", search_value);
+	else
+		printf("BST doesn't contain %d\n", search_value);
+
+	printf("BST::count: %d\n", binary_tree_get_count(tree));
+
+	int i = 0;
+	while((tree != NULL) && (binary_tree_get_count(tree) > 0))
+	{
+		search_value = array[i++];
+		if(binary_search_tree_remove(tree, &search_value, COMPARE_CALLBACK(compare_ints), NULL, DESTROY_CALLBACK(destroy_int), NULL, &tree))
+		{
+			printf("Removal of %d from BST is success\n", search_value);
+		}
+		else
+			printf("Removal of %d from BST is failed\n", search_value);
+		if(tree == NULL)
+			printf("BST InOrder: <empty>\n");
+		else
+		{
+			printf("BST InOrder: "); binary_node_traverse_inorder(tree, TRAVERSE_CALLBACK(print_node_as_int), NULL); puts("");
+		}
+	}
+
+	if(tree != NULL)
+		binary_tree_destroy(tree, DESTROY_CALLBACK(destroy_int), NULL);
 	return 0;
 }

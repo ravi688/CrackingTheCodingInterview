@@ -106,6 +106,7 @@ int binary_node_get_sum_as_int(binary_node_t* node)
 {
 	int sum = 0;
 	binary_node_traverse_inorder(node, TRAVERSE_CALLBACK(sum_callback_handler), (void*)(&sum));
+	return sum;
 }
 
 void binary_node_traverse_preorder(binary_node_t* node, void (*callback)(binary_node_t* node, void* userData), void* userData)
@@ -162,6 +163,77 @@ void binary_node_traverse_inorder(binary_node_t* node, void (*callback)(binary_n
  		binary_node_traverse_inorder(right, callback, userData);
 }
 
+static inline int int_max(int v1, int v2)
+{
+	return (v1 > v2) ? v1 : v2;
+}
+
+static bool binary_node_is_leaf(binary_node_t* node)
+{
+	return (binary_node_get_left(node) == NULL) && (binary_node_get_right(node) == NULL);
+}
+
+static int binary_node_get_height(binary_node_t* node)
+{
+	if((node == NULL) || binary_node_is_leaf(node))
+		return 0;
+	int left_height = (node->left != NULL) ? binary_node_get_height(node->left) : 0;
+	int right_height = (node->right != NULL) ? binary_node_get_height(node->right) : 0;
+	return 1 + int_max(left_height, right_height);
+}
+
+static void __binary_node_traverse_level(binary_node_t* node, int i, int* cur_level, void (*callback)(binary_node_t* node, void* userData), void* userData)
+{
+	if(i != *cur_level)
+	{
+		*cur_level += 1;
+		binary_node_t* left = binary_node_get_left(node);
+		if(left != NULL)
+			__binary_node_traverse_level(left, i, cur_level, callback, userData);
+		binary_node_t* right = binary_node_get_right(node);
+		if(right != NULL)
+			__binary_node_traverse_level(right, i, cur_level, callback, userData);
+		*cur_level -= 1;
+	}
+	else callback(node, userData);
+}
+
+static void binary_node_traverse_level(binary_node_t* node, int i, void (*callback)(binary_node_t* node, void* userData), void* userData)
+{
+	int cur_level = 0;
+	__binary_node_traverse_level(node, i, &cur_level, callback, userData);
+}
+
+void binary_node_traverse_level_order(binary_node_t* node, void (*callback)(binary_node_t* node, void* userData), void* userData)
+{
+	// Level order traversal:
+	/* 				0
+				  /  \
+				 0    0
+				/ \  /  \
+ 			   0  0 0   0
+
+ 	First solution:
+
+	print nodes which are at level 'level':
+		for each child of the current node:
+			if current level is not equal to level:
+				increment level
+				traverse down to the tree
+				decrement level
+			else
+				print node
+
+
+ 	for each level of depth [0, floor(log2(n))]
+ 		print nodes which are at level 'level'
+ 	*/
+
+	int height = binary_node_get_height(node);	
+	for(int i = 0; i <= height; i++)
+		binary_node_traverse_level(node, i, callback, userData);
+}
+
 static void accumulate_count(binary_node_t* node, int* count)
 {
 	*count += 1;
@@ -212,11 +284,6 @@ static binary_node_t* binary_node_get_inorder_successor(binary_node_t* node)
 	if(node->right->left == NULL)
 		return node->right;
 	return binary_node_get_left_most(node->right->left);
-}
-
-static bool binary_node_is_leaf(binary_node_t* node)
-{
-	return (binary_node_get_left(node) == NULL) && (binary_node_get_right(node) == NULL);
 }
 
 bool binary_search_tree_remove(binary_tree_t* tree, void* value, comparer_t compare_callback, void* userData1, void (*destroyCallback)(binary_node_t*, void* userData), void* userData2, binary_node_t** new_root)

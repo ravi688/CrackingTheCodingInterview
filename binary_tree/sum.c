@@ -71,11 +71,19 @@ static void print_node_as_int(binary_node_t* node, void* userData)
 
 #define ARRAY_SIZE(__array__) sizeof(__array__) / sizeof(__array__[0])
 
+static void* clone_int(binary_node_t* node, void* userData)
+{
+	return create_int(binary_node_get_satellite_data_as_int(node));
+}
+
 int main(const char* argv[], int arg)
 {
 	binary_tree_t* tree = build_binary_tree();
 	printf("PreOrder: "); binary_node_traverse_preorder(tree, TRAVERSE_CALLBACK(print_node_as_int), NULL); puts("");
 	printf("InOrder: "); binary_node_traverse_inorder(tree, TRAVERSE_CALLBACK(print_node_as_int), NULL); puts("");
+	binary_tree_t* clone_tree = binary_node_clone(tree, DATA_CLONE_CALLBACK(clone_int), NULL);
+	printf("InOrder2: "); binary_node_traverse_inorder2(tree, TRAVERSE_CALLBACK(print_node_as_int), NULL); puts("");
+	binary_tree_destroy(clone_tree, DESTROY_CALLBACK(destroy_int), NULL);
 	printf("PostOrder: "); binary_node_traverse_postorder(tree, TRAVERSE_CALLBACK(print_node_as_int), NULL); puts("");
 	binary_tree_destroy(tree, DESTROY_CALLBACK(destroy_int), NULL);
 

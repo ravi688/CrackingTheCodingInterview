@@ -36,9 +36,12 @@ static inline int binary_node_get_satellite_data_as_int(binary_node_t* node) { r
 
 // algorithms
 #define TRAVERSE_CALLBACK(callback) ((void (*)(binary_node_t*, void*))(callback))
+#define DATA_CLONE_CALLBACK(callback) ((void* (*)(binary_node_t*, void*))(callback))
 int binary_node_get_sum_as_int(binary_node_t* node);
 void binary_node_traverse_preorder(binary_node_t* node, void (*callback)(binary_node_t* node, void* userData), void* userData);
 void binary_node_traverse_inorder(binary_node_t* node, void (*callback)(binary_node_t* node, void* userData), void* userData);
+binary_node_t* binary_node_clone(binary_node_t* node, void* (*data_clone_callback)(binary_node_t* node, void* userData), void* userData);
+void binary_node_traverse_inorder2(binary_node_t* node, void (*callback)(binary_node_t* node, void* userData), void* userData);
 void binary_node_traverse_postorder(binary_node_t* node, void (*callback)(binary_node_t* node, void* userData), void* userData);
 void binary_node_traverse_level_order(binary_node_t* node, void (*callback)(binary_node_t* node, void* userData), void* userData);
 void binary_node_traverse_level_order2(binary_node_t* node, void (*callback)(binary_node_t* node, void* userData), void* userData);

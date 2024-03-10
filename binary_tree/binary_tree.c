@@ -165,6 +165,48 @@ void binary_node_traverse_inorder(binary_node_t* node, void (*callback)(binary_n
  		binary_node_traverse_inorder(right, callback, userData);
 }
 
+binary_node_t* binary_node_clone(binary_node_t* node, void* (*data_clone_callback)(binary_node_t* node, void* userData), void* userData)
+{
+	binary_node_t* left = binary_node_get_left(node);
+	binary_node_t* clone_left = NULL;
+	if(left != NULL)
+		clone_left = binary_node_clone(left, data_clone_callback, userData);
+	binary_node_t* right = binary_node_get_right(node);
+	binary_node_t* clone_right = NULL;
+	if(right != NULL)
+		clone_right = binary_node_clone(right, data_clone_callback, userData);
+	void* clone_data = (data_clone_callback == NULL) ? binary_node_get_satellite_data(node) : data_clone_callback(node, userData);
+	return binary_node_create(clone_data, clone_left, clone_right);
+}
+
+void binary_node_traverse_inorder2(binary_node_t* node, void (*callback)(binary_node_t* node, void* userData), void* userData)
+{
+	// In order traversal:
+	// 		Visits the left most first recursively
+ 	// 		Then the parent of that left most recursively
+ 	// 		Then the right recursively
+
+ 	// print_inorder:
+ 	// 		if node->left != null:
+ 	//			print_inorder(node->left)
+ 	//		print(node)
+ 	// 		if node->right != null:
+ 	//			print_inorder(node->right)
+ 	//
+
+	// Morris Traversal:
+ 	// node = root
+ 	// prev = null
+ 	// while node != null:
+	// 		if node->left == null:
+	//			print node
+	// 			node = node->right
+	// 		else:
+ 	// 			prev = node->left
+ 	//			TODO
+ 	//
+}
+
 static inline int int_max(int v1, int v2)
 {
 	return (v1 > v2) ? v1 : v2;

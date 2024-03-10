@@ -1,6 +1,7 @@
 
 #include "binary_tree.h"
 #include "../static_queue.h"
+#include "../static_stack.h"
 
 #include <stdlib.h>
 #include <string.h> // memset
@@ -336,9 +337,130 @@ void binary_node_traverse_boundry(binary_node_t* node, void (*callback)(binary_n
 	// 2. Print the leaves from left to right
 	// 3. Print the right most edge excluding the leaf post-order
 
+	// Is there any repeated and redundant work going on?
+	// 	No.
+
+	// Can we optimizie the space requirements for this algorithms?
+	// Yes, by implementing an iterative algorithm.
+
+	// // print the left edge excluding the leaf
+	// node = root
+	// while true:
+	// 		if not a leaf:
+	//			print node
+	//			if node->left != null:
+	//				node = node->left
+	// 			else:
+	// 				node = node->right
+	// 		else:
+	// 			break the loop
+	//
+	// // print the leaves
+	//
+	// queue = new static queue of size 'height of the tree'
+	// queue.push_front(root)
+	// while queue is not empty:
+	// 		node = queue.pop_back()
+	// 		if node is a leaf:
+	// 			print node
+	// 		else:
+	// 			if node->left != null:
+	// 				queue.push_front(node->left)
+	// 			if node->right != null:
+	// 				queue.push_front(node->right)
+	//
+	// // print the right edge excluding the leaf
+	// node = root
+	// while true:
+	// 		if not a leaf:
+	// 			print node
+	// 			if node->right != null:
+	//	 			node = node->right
+	// 			else:
+	// 				node = node->left
+	// 		else
+	// 			break the loop
+
+
 	binary_node_traverse_preorder_left_edge_exclude_leaf(node, callback, userData);
 	binary_node_traverse_leaves(node, callback, userData);
 	binary_node_traverse_postorder_right_edge_exclude_leaf(node, callback, userData);
+}
+
+void binary_node_traverse_boundry2(binary_node_t* node, void (*callback)(binary_node_t* node, void* userData), void* userData)
+{
+	// traverse the left edge excluding the leaf
+	binary_node_t* n = node;
+	while(true)
+	{
+		if(binary_node_is_leaf(n))
+			break;
+		callback(n, userData);
+		binary_node_t* left = binary_node_get_left(n);
+		if(left != NULL)
+			n = left;
+		else
+			n = binary_node_get_right(n);
+	}
+
+	int height = binary_node_get_height(node);
+	static_queue_t* queue = static_queue_create(sizeof(binary_node_t*), (1 << (height + 1)) - 1);
+	
+	// traverse the leaves in level order from left to right
+	static_queue_push(queue, &node);
+	while(!static_queue_is_empty(queue))
+	{
+		binary_node_t* n;
+		static_queue_pop(queue, &n);
+
+		if(binary_node_is_leaf(n))
+			callback(n, userData);
+
+		binary_node_t* left = binary_node_get_left(n);
+		if(left != NULL)
+			static_queue_push(queue, &left);
+		binary_node_t* right = binary_node_get_right(n);
+		if(right != NULL)
+			static_queue_push(queue, &right);
+
+	}
+	static_queue_destroy(queue);
+
+	static_stack_t* stack = static_stack_create(sizeof(binary_node_t*), (1 << (height + 1)) - 1);
+
+	// traverse the right edge excluding the leaf
+	bool is_trace_back = false;
+	static_stack_push(stack, &node);
+	while(!static_stack_is_empty(stack))
+	{
+		binary_node_t* n;
+		static_stack_peek(stack, &n);
+
+		if(!is_trace_back)
+		{
+			binary_node_t* right = binary_node_get_right(n);
+			if(right != NULL)
+			{
+				static_stack_push(stack, &right);
+				continue;
+			}
+			else
+			{
+				binary_node_t* left = binary_node_get_left(n);
+				if(left != NULL)
+				{
+					static_stack_push(stack, &left);
+					continue;
+				}
+			}
+			is_trace_back = true;
+		}
+
+		static_stack_pop(stack, &n);
+		if(!binary_node_is_leaf(n))
+			callback(n, userData);
+	}
+	static_stack_destroy(stack);
 }
 
 static void accumulate_count(binary_node_t* node, int* count)

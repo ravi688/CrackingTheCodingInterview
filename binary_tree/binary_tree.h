@@ -43,6 +43,7 @@ void binary_node_traverse_postorder(binary_node_t* node, void (*callback)(binary
 void binary_node_traverse_level_order(binary_node_t* node, void (*callback)(binary_node_t* node, void* userData), void* userData);
 void binary_node_traverse_level_order2(binary_node_t* node, void (*callback)(binary_node_t* node, void* userData), void* userData);
 void binary_node_traverse_boundry(binary_node_t* node, void (*callback)(binary_node_t* node, void* userData), void* userData);
+void binary_node_traverse_boundry2(binary_node_t* node, void (*callback)(binary_node_t* node, void* userData), void* userData);
 void binary_node_traverse_diagonal(binary_node_t* node, void (*callback)(binary_node_t* node, void* userData), void* userData);
 int binary_tree_get_count(binary_tree_t* tree);
 

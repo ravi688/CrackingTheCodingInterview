@@ -112,6 +112,7 @@ int main(const char* argv[], int arg)
 
 	printf("Level Order: "); binary_node_traverse_level_order(tree, TRAVERSE_CALLBACK(print_node_as_int), NULL); puts("");
 	printf("Level Order2: "); binary_node_traverse_level_order2(tree, TRAVERSE_CALLBACK(print_node_as_int), NULL); puts("");
+	printf("Boundary Order: "); binary_node_traverse_boundry(tree, TRAVERSE_CALLBACK(print_node_as_int), NULL); puts("");
 
 	int i = 0;
 	while((tree != NULL) && (binary_tree_get_count(tree) > 0))

@@ -280,6 +280,67 @@ void binary_node_traverse_level_order2(binary_node_t* node, void (*callback)(bin
 	static_queue_destroy(queue);
 }
 
+static void binary_node_traverse_preorder_left_edge_exclude_leaf(binary_node_t* node, void (*callback)(binary_node_t* node, void* userData), void* userData)
+{
+	if(!binary_node_is_leaf(node))
+	{
+		callback(node, userData);
+		binary_node_t* left = binary_node_get_left(node);
+		if(left != NULL)
+			binary_node_traverse_preorder_left_edge_exclude_leaf(left, callback, userData);
+		else
+		{
+			binary_node_t* right = binary_node_get_right(node);
+			if(right != NULL)
+				binary_node_traverse_preorder_left_edge_exclude_leaf(right, callback, userData);
+		}
+	}
+}
+
+static void binary_node_traverse_postorder_right_edge_exclude_leaf(binary_node_t* node, void (*callback)(binary_node_t* node, void* userData), void* userData)
+{
+	if(!binary_node_is_leaf(node))
+	{
+		binary_node_t* right = binary_node_get_right(node);
+		if(right != NULL)
+			binary_node_traverse_postorder_right_edge_exclude_leaf(right, callback, userData);
+		else
+		{
+			binary_node_t* left = binary_node_get_left(node);
+			if(left != NULL)
+				binary_node_traverse_postorder_right_edge_exclude_leaf(left, callback, userData);
+		}
+		callback(node, userData);
+	}
+}
+
+static void binary_node_traverse_leaves(binary_node_t* node, void (*callback)(binary_node_t* node, void* userData), void* userData)
+{
+	if(binary_node_is_leaf(node))
+		callback(node, userData);
+	else
+	{
+		binary_node_t* left = binary_node_get_left(node);
+		if(left != NULL)
+			binary_node_traverse_leaves(left, callback, userData);
+		binary_node_t* right = binary_node_get_right(node);
+		if(right != NULL)
+			binary_node_traverse_leaves(right, callback, userData);
+	}
+}
+
+void binary_node_traverse_boundry(binary_node_t* node, void (*callback)(binary_node_t* node, void* userData), void* userData)
+{
+	// Algorithm:
+	// 1. Print the left most edge excluding the leaf pre-order
+	// 2. Print the leaves from left to right
+	// 3. Print the right most edge excluding the leaf post-order
+
+	binary_node_traverse_preorder_left_edge_exclude_leaf(node, callback, userData);
+	binary_node_traverse_leaves(node, callback, userData);
+	binary_node_traverse_postorder_right_edge_exclude_leaf(node, callback, userData);
+}
+
 static void accumulate_count(binary_node_t* node, int* count)
 {
 	*count += 1;

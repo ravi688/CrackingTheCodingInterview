@@ -13,11 +13,22 @@ linked_list_node_t* linked_list_node_create(void* satellite_data, linked_list_no
 	return node;
 }
 
-linked_list_node_t* linked_list_node_create_next(linked_list_node_t* node, void* satellite_data)
+linked_list_node_t* linked_list_node_insert_front(linked_list_node_t* node, void* value)
 {
-	linked_list_node_t* next = linked_list_node_create(satellite_data, NULL);
+	linked_list_node_t* next = linked_list_node_create(value, node->next);
 	node->next = next;
 	return next;
+}
+
+linked_list_node_t* linked_list_node_insert_after(linked_list_node_t* node, void* after, void* value, comparer_t compare, void* userData)
+{
+	if(compare(after, node->satellite_data, userData) == 0)
+		return linked_list_node_insert_front(node, value);
+
+	if(node->next != NULL)
+		return linked_list_node_insert_after(node->next, after, value, compare, userData);
+	else
+		return NULL;
 }
 
 void linked_list_node_destroy(linked_list_node_t* node, void (*callback)(linked_list_node_t* node, void* userData), void* userData)

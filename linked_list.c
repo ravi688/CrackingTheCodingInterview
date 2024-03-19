@@ -22,6 +22,32 @@ linked_list_node_t* linked_list_node_insert_front(linked_list_node_t* node, void
 
 linked_list_node_t* linked_list_node_insert_after(linked_list_node_t* node, void* after, void* value, comparer_t compare, void* userData)
 {
+	// Solution no 1 (Recursive)
+	//
+	// insert_after(node, after, value):
+	// 		if after == node->value:
+	// 			 new_node = create_node(value)
+	// 			 new_node->next = node->next
+	// 			 node->next = new_node
+	// 			 return new_node
+	//
+	// 		if node->next != null:
+	// 	  		return insert_after(node->next, after, value)
+	//		else return null
+	//
+	// Solution no 2 (Iterative)
+	//
+	// insert_after(node, after, value):
+	//		while node != null:
+	// 			if after == node->value:
+	// 			 	new_node = create_node(value)
+	// 				new_node->next = node->next
+	// 				node->next = new_node
+	//				return new_node
+	//			else:
+	// 				node = node->next
+	//		return null
+
 	if(compare(after, node->satellite_data, userData) == 0)
 		return linked_list_node_insert_front(node, value);
 

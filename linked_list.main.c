@@ -53,6 +53,8 @@ int main(int argc, const char* argv[])
 	printf("After insert_front: \n"); linked_list_node_traverse(list, print_int, NULL); puts("");
 	linked_list_node_insert_after(list, create_int(-5), create_int(-6), COMPARE_CALLBACK(compare_ints), NULL);
 	printf("After insert_after: \n"); linked_list_node_traverse(list, print_int, NULL); puts("");
+	linked_list_node_insert_last(list, create_int(200));
+	printf("After insert_last: \n"); linked_list_node_traverse(list, print_int, NULL); puts("");
 
 	linked_list_destroy(list, destroy_int, NULL);
 	return 0;

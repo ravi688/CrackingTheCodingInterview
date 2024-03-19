@@ -37,3 +37,4 @@ void linked_list_node_traverse_postorder(linked_list_node_t* node, void (*callba
 linked_list_node_t* linked_list_node_reverse(linked_list_node_t* node);
 linked_list_node_t* linked_list_node_insert_front(linked_list_node_t* node, void* value);
 linked_list_node_t* linked_list_node_insert_after(linked_list_node_t* node, void* after, void* value, comparer_t compare, void* userData);
+linked_list_node_t* linked_list_node_insert_last(linked_list_node_t* node, void* value);

@@ -117,3 +117,12 @@ linked_list_node_t* linked_list_node_reverse(linked_list_node_t* node)
 	}
 	return p1;
 }
+
+linked_list_node_t* linked_list_node_insert_last(linked_list_node_t* node, void* value)
+{
+	// go to the last node
+	while(node->next != NULL)
+		node = node->next;
+
+	return linked_list_node_insert_front(node, value);
+}

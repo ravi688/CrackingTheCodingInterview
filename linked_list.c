@@ -49,7 +49,7 @@ void linked_list_node_traverse_postorder(linked_list_node_t* node, void (*callba
 	callback(node, userData);
 }
 
-void linked_list_node_reverse(linked_list_node_t* node)
+linked_list_node_t* linked_list_node_reverse(linked_list_node_t* node)
 {
 	// Solution no 1
 	// n0 -> n1 -> n2 -> n3 -> n4 -> ...
@@ -62,20 +62,21 @@ void linked_list_node_reverse(linked_list_node_t* node)
 	// p1 = n0
 	// p2 = n0->next
 	// while p2 != null:
+	// 		n0->next = p2->next
 	// 		t = p2->next
 	// 		p2->next = p1
-	// 		p1->next = t
-	// 		p1 = p2
-	//		p2 = t
+	//		p1 = p2
+	// 		p2 = t
 
 	linked_list_node_t* p1 = node;
 	linked_list_node_t* p2 = node->next;
-	while(p1 != NULL)
+	while(p2 != NULL)
 	{
+		node->next = p2->next;
 		linked_list_node_t* t = p2->next;
 		p2->next = p1;
-		p1->next = t;
 		p1 = p2;
 		p2 = t;
 	}
+	return p1;
 }

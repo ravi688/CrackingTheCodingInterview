@@ -32,4 +32,4 @@ static inline void* linked_list_node_get_satellite_data(linked_list_node_t* node
 // algorithms
 void linked_list_node_traverse(linked_list_node_t* node, void (*callback)(linked_list_node_t* node, void* userData), void* userData);
 void linked_list_node_traverse_postorder(linked_list_node_t* node, void (*callback)(linked_list_node_t* node, void* userData), void* userData);
-void linked_list_node_reverse(linked_list_node_t* node);
+linked_list_node_t* linked_list_node_reverse(linked_list_node_t* node);

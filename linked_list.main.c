@@ -27,14 +27,16 @@ int main(int argc, const char* argv[])
 				linked_list_node_create_next(
 					linked_list_node_create_next(
 						linked_list_node_create_next(list,
-							create_int(-100)),
-						create_int(-5)),
+						create_int(-100)),
+					create_int(-5)),
 				create_int(10)),
 			create_int(500)),
 		create_int(30)),
 	create_int(-40));
 
-	linked_list_node_traverse(list, print_int, NULL);
+	printf("Before reverse: \n"); linked_list_node_traverse(list, print_int, NULL); puts("");
+	list = linked_list_node_reverse(list);
+	printf("After reverse: \n"); linked_list_node_traverse(list, print_int, NULL); puts("");
 
 	linked_list_destroy(list, destroy_int, NULL);
 	return 0;

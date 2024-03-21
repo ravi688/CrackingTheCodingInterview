@@ -72,6 +72,37 @@ void linked_list_destroy(linked_list_t* list, void (*callback)(linked_list_node_
 }
 
 // algorithms
+linked_list_node_t* linked_list_node_nth_end(linked_list_node_t* node, int nth)
+{
+	// Solution on 1 (two pointers approach):
+	//
+	//  p1 = node
+	//	i = 1
+	// 	while i != nth && p1 != NULL:
+	//		p1 = p1->next
+	//		++i
+	// 	p2 = node
+	// 	while p1 != NULL
+	//		p1 = p1->next
+	//		p2 = p2->next
+	//	return p2
+
+	linked_list_node_t* p1 = node;
+	int i = 1;
+	while((i < nth) && (p1 != NULL))
+	{
+		p1 = p1->next;
+		++i;
+	}
+	linked_list_node_t* p2 = node;
+	while((p1 != NULL) && (p1->next != NULL))
+	{
+		p1 = p1->next;
+		p2 = p2->next;
+	}
+	return p2;
+}
+
 int linked_list_node_get_length(linked_list_node_t* node)
 {
 	int count = 0;

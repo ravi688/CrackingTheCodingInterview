@@ -126,3 +126,25 @@ linked_list_node_t* linked_list_node_insert_last(linked_list_node_t* node, void*
 
 	return linked_list_node_insert_front(node, value);
 }
+
+void linked_list_node_sort(linked_list_node_t* node, comparer_t compare, void* userData)
+{
+	// Solution no 1 (Merge Sort, Recursive):
+	//
+	// merge_sort(node):
+	//	middle_node, count = get_middle_node(node)
+	// 	if count <= 1:
+	// 		return node
+	// 	left_list = node
+	// 	right_list = middle_node->next
+	// 	middle_node->next = null
+	// 	left_list = merge_sort(left_list)
+	// 	right_list = merge_sort(right_list)
+	// 		if left_list->value < right_list->value:
+	// 			join_last(left_list, right_list)
+	// 			join_last(right_list, null)
+	// 		else:
+	// 			join_last(right_list, left_list)
+	// 			join_last(left_list, null)
+	// 	return left_list
+}

@@ -55,7 +55,7 @@ int main(int argc, const char* argv[])
 	printf("After insert_after: \n"); linked_list_node_traverse(list, print_int, NULL); puts("");
 	linked_list_node_insert_last(list, create_int(200));
 	printf("After insert_last: \n"); linked_list_node_traverse(list, print_int, NULL); puts("");
-	linked_list_node_sort(list, COMPARE_CALLBACK(compare_ints), NULL);
+	list = linked_list_node_sort(list, COMPARE_CALLBACK(compare_ints), NULL);
 	printf("After sort:\n"); linked_list_node_traverse(list, print_int, NULL);  puts("");
 
 	linked_list_destroy(list, destroy_int, NULL);

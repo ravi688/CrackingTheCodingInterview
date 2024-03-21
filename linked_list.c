@@ -72,6 +72,17 @@ void linked_list_destroy(linked_list_t* list, void (*callback)(linked_list_node_
 }
 
 // algorithms
+int linked_list_node_get_length(linked_list_node_t* node)
+{
+	int count = 0;
+	while(node != NULL)
+	{
+		++count;
+		node = node->next;
+	}
+	return count;
+}
+
 void linked_list_node_traverse(linked_list_node_t* node, void (*callback)(linked_list_node_t* node, void* userData), void* userData)
 {
 	callback(node, userData);
@@ -118,16 +129,79 @@ linked_list_node_t* linked_list_node_reverse(linked_list_node_t* node)
 	return p1;
 }
 
-linked_list_node_t* linked_list_node_insert_last(linked_list_node_t* node, void* value)
+static linked_list_node_t* get_last(linked_list_node_t* node)
 {
 	// go to the last node
 	while(node->next != NULL)
 		node = node->next;
+	return node;	
+}
 
+linked_list_node_t* linked_list_node_insert_last(linked_list_node_t* node, void* value)
+{
+	node = get_last(node);
 	return linked_list_node_insert_front(node, value);
 }
 
-void linked_list_node_sort(linked_list_node_t* node, comparer_t compare, void* userData)
+static linked_list_node_t* get_node(linked_list_node_t* node, int index)
+{
+	int i = 0;
+	while((node != NULL) && (i < index))
+	{
+		node = node->next;
+		++i;
+	}
+	return node;
+}
+
+static linked_list_node_t* sorted_merge(linked_list_node_t* first, linked_list_node_t* second, comparer_t compare, void* userData)
+{
+	linked_list_node_t* final = NULL;
+	linked_list_node_t* n3 = NULL;
+	linked_list_node_t* n1 = first;
+	linked_list_node_t* n2 = second;
+	while((n1 != NULL) && (n2 != NULL))
+	{
+		if(compare(n1->satellite_data, n2->satellite_data, userData) < 0)
+		{
+			if(n3 == NULL)
+			{
+				n3 = n1;
+				final = n3;
+			}
+			else
+			{
+				n3->next = n1;
+				n3 = n1;
+			}
+			n1 = n1->next;
+		}
+		else
+		{
+			if(n3 == NULL)
+			{
+				n3 = n2;
+				final = n3;
+			}
+			else
+			{
+				n3->next = n2;
+				n3 = n2;
+			}
+			n2 = n2->next;
+		}
+	}
+
+	if(n1 != NULL)
+		n3->next = n1;
+
+	if(n2 != NULL)
+		n3->next = n2;
+
+	return final;
+}
+
+linked_list_node_t* linked_list_node_sort(linked_list_node_t* node, comparer_t compare, void* userData)
 {
 	// Solution no 1 (Merge Sort, Recursive):
 	//
@@ -140,11 +214,24 @@ void linked_list_node_sort(linked_list_node_t* node, comparer_t compare, void* u
 	// 	middle_node->next = null
 	// 	left_list = merge_sort(left_list)
 	// 	right_list = merge_sort(right_list)
-	// 		if left_list->value < right_list->value:
-	// 			join_last(left_list, right_list)
-	// 			join_last(right_list, null)
-	// 		else:
-	// 			join_last(right_list, left_list)
-	// 			join_last(left_list, null)
-	// 	return left_list
+	// 	if left_list->value < right_list->value:
+	// 		return sorted_merge(left_list, right_list)
+	// 	else:
+	// 		return sorted_merge(right_list, left_list)
+
+	int len = linked_list_node_get_length(node);
+	if(len <= 1)
+		return node;
+	linked_list_node_t* middle_node = get_node(node, (len - 1) >> 1);
+
+	linked_list_node_t* left_list = node;
+	linked_list_node_t* right_list = middle_node->next;
+	middle_node->next = NULL;
+	left_list = linked_list_node_sort(left_list, compare, userData);
+	right_list = linked_list_node_sort(right_list, compare, userData);
+
+	if(compare(left_list->satellite_data, right_list->satellite_data, userData) <= 0)
+		return sorted_merge(left_list, right_list, compare, userData);
+	else
+		return sorted_merge(right_list, left_list, compare, userData);
 }

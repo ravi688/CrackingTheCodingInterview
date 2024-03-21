@@ -32,10 +32,11 @@ static inline void* linked_list_node_get_satellite_data(linked_list_node_t* node
 typedef int (*comparer_t)(void* value, void* compare_value, void* userData);
 #define COMPARE_CALLBACK(callback) (comparer_t)(callback)
 
+int linked_list_node_get_length(linked_list_node_t* node);
 void linked_list_node_traverse(linked_list_node_t* node, void (*callback)(linked_list_node_t* node, void* userData), void* userData);
 void linked_list_node_traverse_postorder(linked_list_node_t* node, void (*callback)(linked_list_node_t* node, void* userData), void* userData);
 linked_list_node_t* linked_list_node_reverse(linked_list_node_t* node);
 linked_list_node_t* linked_list_node_insert_front(linked_list_node_t* node, void* value);
 linked_list_node_t* linked_list_node_insert_after(linked_list_node_t* node, void* after, void* value, comparer_t compare, void* userData);
 linked_list_node_t* linked_list_node_insert_last(linked_list_node_t* node, void* value);
-void linked_list_node_sort(linked_list_node_t* node, comparer_t compare, void* userData);
+linked_list_node_t* linked_list_node_sort(linked_list_node_t* node, comparer_t compare, void* userData);

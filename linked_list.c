@@ -103,6 +103,19 @@ linked_list_node_t* linked_list_node_nth_end(linked_list_node_t* node, int nth)
 	return p2;
 }
 
+linked_list_node_t* linked_list_node_nth_end2(linked_list_node_t* node, int nth)
+{
+	static int count = 0;
+	linked_list_node_t* nth_node = NULL;
+	if(node->next != NULL)
+		nth_node = linked_list_node_nth_end2(node->next, nth);
+	++count;
+	if(count == nth)
+		return node;
+	else
+		return nth_node;
+}
+
 int linked_list_node_get_length(linked_list_node_t* node)
 {
 	int count = 0;

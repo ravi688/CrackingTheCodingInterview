@@ -505,6 +505,43 @@ void binary_node_traverse_boundry2(binary_node_t* node, void (*callback)(binary_
 	static_stack_destroy(stack);
 }
 
+void binary_node_traverse_diagonal(binary_node_t* node, void (*callback)(binary_node_t* node, void* userData), void* userData)
+{
+	// Diagonal Traversal
+	//
+	// Solution no 1:
+	//
+	// traverse_single_diag(root, depth):
+	// 		queue = 0
+	// 		queue.push(root)
+	//		current_depth = 0
+	// 		while !queue.empty():
+	// 			node = queue.pop()
+	//			current_depth = max(0, current_depth - 1)
+	//			if node->right != null:
+	// 				queue.push(node->right)
+	// 			if current_depth == depth:
+	//				print node
+	// 			else:
+	// 				if node->left != null:
+	// 					node = node->left
+	//					current_depth++
+
+	// 		queue = 0
+	// 		queue.push(root)
+	// 		node = root
+	//		current_depth = 0
+	// 		while !queue.empty():
+	// 			if current_depth == depth:
+	//				print node
+	// 			else:
+	//				if node->right != null:
+	// 					queue.push(node->right)
+	// 				if node->left != null:
+	// 					node = node->left
+	// 					++current_depth
+}
+
 static void accumulate_count(binary_node_t* node, int* count)
 {
 	*count += 1;
@@ -517,6 +554,60 @@ int binary_tree_get_count(binary_tree_t* tree)
 	int count = 0;
 	binary_node_traverse_postorder(tree, TRAVERSE_CALLBACK(accumulate_count), &count);
 	return count;
+}
+
+int binary_tree_get_max_width(binary_tree_t* tree)
+{
+	// Solution no 1
+	//
+	// // Time Complexity: O(2^0 + 2^1 + 2^2 + ... + 2^level) = O(2^(level + 1) - 1) = O(2^level)
+	// traverse_preorder(node, depth, level, width*):
+	//		if depth++ >= level:
+	//			width += 1
+	//			return
+	//		left = node->left
+	//		if left != null:
+	//			traverse_preorder(left, depth, level, width)
+	//		right = node->right
+	//		if right != null:
+	//			traverse_preorder(right, depth, level, width)
+	//
+	// // Time Complexity: O(2^level)
+	// get_width(node, level):
+	// 	 	width = 0
+	//		traverse_preorder(node, 0, level, &width)
+	//		return width
+	//
+	// // Time Complexity: O(n + 2^0 + 2^1 + 2^2 + ... + 2^(log2(n)) = O(n + 2^(log2(n) + 1)) = O(3n)
+	// get_max_width(tree):
+	// 		int height = get_height(tree)
+	// 		int max_width = 0
+	// 		for i = [0, height - 1]:
+	//			width = get_width(tree, i)
+	//			if width > max_width:
+	//				max_width = width
+	// 		return max_width
+
+	// Solution no 2
+	//
+	// // Time Complexity: O(n)
+	// traverse_preorder(node, registry*, level):
+	//		registry[level++] += 1
+	// 		left = node->left
+	//		if left != null:
+	//			traverse_preorder(left, level)
+	//		right = node->right
+	//		if right != null:
+	//			traverse_preorder(right, level)
+	//
+	// // Time Complexity: O(n + n + log2(n)) = O(2n + log2(n))
+	// get_max_width(tree):
+	// 		height = get_height(tree)
+	//		registry[height] = { }
+	//		traverse_preorder(tree, registry, 0)
+	//		return find_max(registry)
+
+	// Hence, Solution no 2 is more time efficient because 2n + log2(n) < 3n.
 }
 
 binary_node_t* binary_search_tree_insert(binary_tree_t* tree, void* value, comparer_t compare_callback, void* userData)

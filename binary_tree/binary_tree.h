@@ -50,6 +50,7 @@ void binary_node_traverse_boundry(binary_node_t* node, void (*callback)(binary_n
 void binary_node_traverse_boundry2(binary_node_t* node, void (*callback)(binary_node_t* node, void* userData), void* userData);
 void binary_node_traverse_diagonal(binary_node_t* node, void (*callback)(binary_node_t* node, void* userData), void* userData);
 int binary_tree_get_count(binary_tree_t* tree);
+int binary_tree_get_max_width(binary_tree_t* tree);
 
 typedef int (*comparer_t)(void* value, void* compare_value, void* userData);
 #define COMPARE_CALLBACK(callback) (comparer_t)(callback)

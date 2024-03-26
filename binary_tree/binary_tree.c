@@ -556,6 +556,30 @@ int binary_tree_get_count(binary_tree_t* tree)
 	return count;
 }
 
+static void traverse_preorder(binary_node_t* node, int* registry, int level)
+{
+	registry[level++] += 1;
+
+	binary_node_t* child = node->left;
+	if(child != NULL)
+		traverse_preorder(child, registry, level);
+	child = node->right;
+	if(child != NULL)
+		traverse_preorder(child, registry, level);
+}
+
+static int find_max(const int* const array, int count)
+{
+	int max = array[0];
+	for(int i = 1; i < count; i++)
+	{
+		int t = array[i];
+		if(max < t)
+			max = t;
+	}
+	return max;
+}
+
 int binary_tree_get_max_width(binary_tree_t* tree)
 {
 	// Solution no 1
@@ -608,6 +632,11 @@ int binary_tree_get_max_width(binary_tree_t* tree)
 	//		return find_max(registry)
 
 	// Hence, Solution no 2 is more time efficient because 2n + log2(n) < 3n.
+
+	int height = binary_node_get_height(tree);
+	int registry[height] = { };
+	traverse_preorder(tree, registry, 0);
+	return find_max(registry, height);
 }
 
 binary_node_t* binary_search_tree_insert(binary_tree_t* tree, void* value, comparer_t compare_callback, void* userData)

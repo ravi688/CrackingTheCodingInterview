@@ -123,6 +123,9 @@ int main(const char* argv[], int arg)
 	printf("Boundary Order: "); binary_node_traverse_boundry(tree, TRAVERSE_CALLBACK(print_node_as_int), NULL); puts("");
 	printf("Boundary Order2: "); binary_node_traverse_boundry2(tree, TRAVERSE_CALLBACK(print_node_as_int), NULL); puts("");
 
+	int max_width = binary_tree_get_max_width(tree);
+	printf("Max Width: %d\n", max_width);
+
 	int i = 0;
 	while((tree != NULL) && (binary_tree_get_count(tree) > 0))
 	{

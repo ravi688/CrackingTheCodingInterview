@@ -108,6 +108,7 @@ int main(const char* argv[], int arg)
 		     100                                          -1
 	 */
 	tree = build_binary_search_tree(array, ARRAY_SIZE(array));
+	binary_node_dump(tree, TRAVERSE_CALLBACK(print_node_as_int), NULL);
 	printf("BST InOrder: "); binary_node_traverse_inorder(tree, TRAVERSE_CALLBACK(print_node_as_int), NULL); puts("");
 	
 	int search_value = -1;

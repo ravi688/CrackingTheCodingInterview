@@ -6,6 +6,7 @@
 #include <stdlib.h>
 #include <string.h> // memset
 #include <assert.h>
+#include <stdio.h> // printf and puts
 
 binary_node_t* binary_node_create(void* satellite_data, binary_node_t* left, binary_node_t* right)
 {
@@ -637,6 +638,74 @@ int binary_tree_get_max_width(binary_tree_t* tree)
 	int registry[height] = { };
 	traverse_preorder(tree, registry, 0);
 	return find_max(registry, height);
+}
+
+static void traverse_reverse_inorder(binary_node_t* node, void (*callback)(binary_node_t* node, void* userData), void* userData, int tab)
+{
+	binary_node_t* right = node->right;
+	if(right != NULL)
+	{
+		++tab;
+		traverse_reverse_inorder(right, callback, userData, tab);
+		--tab;
+	}
+	for(int i = 0; i < tab; i++)
+		printf("\t");
+	callback(node, userData);
+	puts("");
+	binary_node_t* left = node->left;
+	if(left != NULL)
+	{
+		++tab;
+		traverse_reverse_inorder(left, callback, userData, tab);
+		--tab;
+	}
+}
+
+void binary_node_dump(binary_tree_t* tree, void (*callback)(binary_node_t* node, void* userData), void* userData)
+{
+	// We can dump the tree by its side, as it will be very difficult to print it upright on a console screen.
+	//
+	// Solution no 1:
+	// 		traverse_reverse_inorder(node):
+	//			right = node->right
+	//			if right != null:
+	//				push '\t'
+	//				traverse_reverse_inorder(right)
+	//				pop '\t'
+	//			print all the accumulated '\t'
+	//			print node
+	//			print newline
+	//			left = node->left
+	//			if left != null:
+	//				push '\t'
+	//				traverse_reverse_inorder(left)
+	//				pop '\t'
+	//
+	// Solution no 2:
+	//		traverse_reverse_inorder(node, tab):
+	//			right = node->right
+	//			if right != null:
+	//				tab += 1
+	//				traverse_reverse_inorder(node, tab)
+	//				tab -= 1
+	//			for i = 1 until tab:
+	//				print '\t'
+	//			print node
+	//			print newline
+	//			left = node->left
+	//			if left != null:
+	//				tab += 1
+	//				traverse_reverse_inorder(left)
+	//				tab -= 1
+	//
+	// Remarks:
+	//	Solution no 1 is less efficient as compared to Solution no 2, because we would need to 
+	//  maintain an extra storage for stack in the Solution no 1, while there is no need to maintain
+	//  extra storage for the Solution no 2 except just one integer which holds the number of times
+	//  to print/replicate the tab character (glyph).
+
+	traverse_reverse_inorder(tree, callback, userData, 0);
 }
 
 binary_node_t* binary_search_tree_insert(binary_tree_t* tree, void* value, comparer_t compare_callback, void* userData)

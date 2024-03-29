@@ -101,7 +101,6 @@ static void binary_node_balance(binary_node_t* node)
 	}
 }
 
-
 int main(int argc, const char* argv[])
 {
 	int array[12] = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12 };

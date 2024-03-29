@@ -4,6 +4,11 @@
 // Description: Self-Balancing Trees are height-balanced binary search trees that automatically 
 // keep the height as small as possible when insertion and deletion operations are performed on the trees.
 // RB Trees take advantage of the property of BST to make rotations and eventually balance the tree.
+// The height of a RB Tree can be no more than 2log2(n + 1)
+// One can convince himself that an ordinary complete or perfect binary tree has height of log2(n + 1)
+// And an RB tree can have height of one subtree twice that of the another subtree at the same name level
+// So the maximum height of a RB tree can be 2 x log2(n + 1). 
+// Fact: Height of a non-perfect and non-complete binary tree is can be greater than a perfect or complete binary tree!
 
 #include "binary_tree/binary_tree.h"
 #include <stdint.h>
@@ -27,13 +32,10 @@ typedef struct rb_node_t
 	rb_node_t* right;
 } rb_node_t;
 
-#ifdef COMPARE_CALLBACK
-#	undef COMPARE_CALLBACK
-#endif
-#define COMPARE_CALLBACK(callback) (comparer_t)(callback)
-typedef int (*comparer_t)(rb_node_t* value, rb_node_t* cmp_value, void* userData);
+#define RB_NODE_COMPARE_CALLBACK(callback) (rb_node_comparer_t)(callback)
+typedef int (*rb_node_comparer_t)(rb_node_t* value, rb_node_t* cmp_value, void* userData);
 
-rb_node_t* rb_node_insert(rb_node_t* root, void* value, comparer_t compare, void* userData);
-rb_node_t* rb_node_delete(rb_node_t* root, void* value, comparer_t compare, void* userData);
-rb_node_t* rb_node_search(rb_node_t* root, void* value, comparer_t compare, void* userData);
+rb_node_t* rb_node_insert(rb_node_t* root, void* value, rb_node_comparer_t compare, void* userData);
+rb_node_t* rb_node_remove(rb_node_t* root, void* value, rb_node_comparer_t compare, void* userData);
+rb_node_t* rb_node_search(rb_node_t* root, void* value, rb_node_comparer_t compare, void* userData);
 binary_node_t* rb_node_to_binary_node(rb_node_t* node, int data_size);

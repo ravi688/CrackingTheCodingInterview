@@ -139,6 +139,18 @@ int main(int argc, const char* argv[])
 	puts("After Balancing: \n");
 	binary_node_dump(tree, TRAVERSE_CALLBACK(print_node_as_int), NULL);
 
+	rb_node_t* rb = rb_node_insert(NULL, create_int(100), COMPARE_CALLBACK(compare_ints), NULL);
+	rb = rb_node_insert(rb, create_int(200), COMPARE_CALLBACK(compare_ints), NULL);
+	rb = rb_node_insert(rb, create_int(300), COMPARE_CALLBACK(compare_ints), NULL);
+	rb = rb_node_insert(rb, create_int(400), COMPARE_CALLBACK(compare_ints), NULL);
+	rb = rb_node_insert(rb, create_int(500), COMPARE_CALLBACK(compare_ints), NULL);
+
+	binary_node_t* bt = rb_node_to_binary_node(rb, sizeof(int));
+
+	puts("After conversion: ");
+	binary_node_dump(bt, TRAVERSE_CALLBACK(print_node_as_int), NULL);
+
+	free(rb_node_destroy(rb));
 
 	return 0;
 }

@@ -9,6 +9,14 @@
 // And an RB tree can have height of one subtree twice that of the another subtree at the same name level
 // So the maximum height of a RB tree can be 2 x log2(n + 1). 
 // Fact: Height of a non-perfect and non-complete binary tree is can be greater than a perfect or complete binary tree!
+//
+// Properties of a Red-Black Tree
+// 1. Root node is black
+// 2. All leaves (NIL) are black
+// 3. Every simple path starting but not including from a node to any of the descendent leaves must have the same number of black nodes
+// 4. If a node is red then its parent is black
+// 5. Each node is either red or black
+
 
 #include "binary_tree/binary_tree.h"
 #include <stdint.h>
@@ -30,12 +38,15 @@ typedef struct rb_node_t
 	color_t color;
 	rb_node_t* left;
 	rb_node_t* right;
+	rb_node_t* parent;
 } rb_node_t;
 
-#define RB_NODE_COMPARE_CALLBACK(callback) (rb_node_comparer_t)(callback)
-typedef int (*rb_node_comparer_t)(rb_node_t* value, rb_node_t* cmp_value, void* userData);
+// Constructors and Destructors
+rb_node_t* rb_node_create(void* value, rb_node_t* left, rb_node_t* right, rb_node_t* parent);
+void* rb_node_destroy(rb_node_t* node);
 
-rb_node_t* rb_node_insert(rb_node_t* root, void* value, rb_node_comparer_t compare, void* userData);
-rb_node_t* rb_node_remove(rb_node_t* root, void* value, rb_node_comparer_t compare, void* userData);
-rb_node_t* rb_node_search(rb_node_t* root, void* value, rb_node_comparer_t compare, void* userData);
+// Algorithms
+rb_node_t* rb_node_insert(rb_node_t* root, void* value, comparer_t compare, void* userData);
+rb_node_t* rb_node_remove(rb_node_t* root, void* value, comparer_t compare, void* userData);
+rb_node_t* rb_node_search(rb_node_t* root, void* value, comparer_t compare, void* userData);
 binary_node_t* rb_node_to_binary_node(rb_node_t* node, int data_size);

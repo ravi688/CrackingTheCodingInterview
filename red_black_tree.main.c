@@ -139,11 +139,62 @@ int main(int argc, const char* argv[])
 	puts("After Balancing: \n");
 	binary_node_dump(tree, TRAVERSE_CALLBACK(print_node_as_int), NULL);
 
+	/*
+
+	 100
+	  \
+	   200
+
+	  200 b
+	  / \
+	 100 300 r
+	  r 
+	          200 b
+	         /  \
+	        100 300 b
+	       b      \
+	               400 r
+
+	          200
+	         /  \
+	        100 300
+	              \
+	               400
+	                \
+	                500
+
+	          200 b
+	         /  \
+	      b 100 400 b
+	            / \
+	           300 500 r
+	           r
+
+	          200 b
+	         /  \
+	        100 400 b
+	        r   / \
+	           300 500
+	                \
+	                600
+
+	*/
+
 	rb_node_t* rb = rb_node_insert(NULL, create_int(100), COMPARE_CALLBACK(compare_ints), NULL);
 	rb = rb_node_insert(rb, create_int(200), COMPARE_CALLBACK(compare_ints), NULL);
 	rb = rb_node_insert(rb, create_int(300), COMPARE_CALLBACK(compare_ints), NULL);
 	rb = rb_node_insert(rb, create_int(400), COMPARE_CALLBACK(compare_ints), NULL);
 	rb = rb_node_insert(rb, create_int(500), COMPARE_CALLBACK(compare_ints), NULL);
+	rb = rb_node_insert(rb, create_int(600), COMPARE_CALLBACK(compare_ints), NULL);
+	rb = rb_node_insert(rb, create_int(700), COMPARE_CALLBACK(compare_ints), NULL);
+	rb = rb_node_insert(rb, create_int(800), COMPARE_CALLBACK(compare_ints), NULL);
+	rb = rb_node_insert(rb, create_int(900), COMPARE_CALLBACK(compare_ints), NULL);
+	rb = rb_node_insert(rb, create_int(1000), COMPARE_CALLBACK(compare_ints), NULL);
+	rb = rb_node_insert(rb, create_int(-1000), COMPARE_CALLBACK(compare_ints), NULL);
+	rb = rb_node_insert(rb, create_int(-2000), COMPARE_CALLBACK(compare_ints), NULL);
+	rb = rb_node_insert(rb, create_int(3000), COMPARE_CALLBACK(compare_ints), NULL);
+	rb = rb_node_insert(rb, create_int(4000), COMPARE_CALLBACK(compare_ints), NULL);
+	rb = rb_node_insert(rb, create_int(5000), COMPARE_CALLBACK(compare_ints), NULL);
 
 	binary_node_t* bt = rb_node_to_binary_node(rb, sizeof(int));
 

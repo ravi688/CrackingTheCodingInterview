@@ -26,145 +26,261 @@ void* rb_node_destroy(rb_node_t* node)
 	return ptr;
 }
 
-rb_node_t* rb_node_insert(rb_node_t* root, void* value, comparer_t compare, void* userData)
+// Properties of a Red Black Tree
+// 1. Root node is always black
+// 2. Leaves are always black (NIL)
+// 3. If a node is red then its parent is black
+// 4. Number of black nodes from a node to any of its descendent leaves are the same
+// NOTE: if a node has a single child then it must a red child!
+// NOTE: Every perfect binary tree that consists only of black nodes is a red-black tree
+// There are two types of voilations possible while inserting or deleting nodes:
+//		1. Red voilation, no two adjacent nodes can have red color
+//		2. Black voilation, every simple path from a node to any of its descendants must have the same number of black nodes
+rb_node_t* rb_node_insert2(rb_node_t* node, void* value, comparer_t compare, void* userData)
 {
-	rb_node_t* node = NULL;
-	if(root == NULL)
+	// Solution no 1
+	//
+	// rb_node_insert(node, value):
+	//		if node is null:
+	//			node = create_node(value)
+	//			node->color = black
+	//			node->parent = null
+	//			return node
+	//		if node->value < value:
+	//			if node->right == null:
+	//				node->right = create_node(value)
+	//				node->right->color = red
+	//				node->right->parent = node
+	//				return node
+	//			else:
+	//				node->right = rb_node_insert(&node->right, value)
+	//				node->right->parent = node
+	//		else:
+	//			if node->left == null:
+	//				node->left = create_node(value)
+	//				node->left->color = red
+	//				node->left->parent = node
+	//				return node
+	//			else:
+	//				node->left = rb_node_insert(&node->left, value)
+	//				node->left->parent = node
+	//
+	// 		if node->color == black:
+	//			if node->right && node->right->color == red:
+	//				parent = node->parent
+	//				if node->right->right && node->right->right->color == red:
+	//					if parent:
+	//						if parent->left == node:
+	//							parent->left = node->right
+	//						else:
+	//							parent->right = node->right
+	//					node->right->parent = parent
+	//					node->right->left = node
+	//					node->parent = node->right
+	//					node->parent->color = black
+	//					node->color = red
+	//					return node->parent
+	//				else if node->right->left && node->right->left->color == red:
+	//					t = node->right
+	//					node->right = node->right->left
+	//					node->right->left->parent = node
+	//					node->right->right = t
+	//					t->parent = node->right
+	//					if parent:
+	//						if parent->left = node:
+	//							parent->left = node->right
+	//						else:
+	//							parent->right = node->right
+	//					node->right->parent = parent
+	//					node->right->left = node
+	//					node->parent = node->right
+	//					node->parent->color = black
+	//					node->parent->left = red
+	//					return node->parent
+	//			else if node->left && node->left->color == red:
+	//				if node->left->left && node->left->left->color == red:
+	//					if parent:
+	//						if parent->left == node:
+	//							parent->left = node->left
+	//						else:
+	//							parent->right = node->left
+	//					node->left->parent = parent
+	//					node->left->right = node
+	//					node->parent = node->left
+	//					node->parent->color = black
+	//					node->color = red
+	//					return node->parent
+	//				else if node->left->right && node->left->right->color == red:
+	//					t = node->left
+	//					node->left = node->left->right
+	//					node->left->right->parent = node
+	//					node->left->left = t
+	//					t->parent = node->left
+	//					if parent:
+	//						if parent->left = node:
+	//							parent->left = node->left
+	//						else:
+	//							parent->right = node->left
+	//					node->left->parent = parent
+	//					node->left->right = node
+	//					node->parent = node->left
+	//					node->parent->color = black
+	//					node->color = red
+	//					return node->parent
+
+}
+
+rb_node_t* rb_node_insert(rb_node_t* node, void* value, comparer_t compare, void* userData)
+{
+	if(node == NULL)
 	{
-		node = rb_node_create(value, NULL, NULL, NULL);
+		rb_node_t* new_node = rb_node_create(value, NULL, NULL, NULL);
 		// Red Black Tree Property: Root is always black
-		node->color = COLOR_BLACK;
-		root = node;
+		new_node->color = COLOR_BLACK;
+		return new_node;
 	}
-	else if(compare(value, root->satellite_data, userData) > 0)
+	else if(compare(value, node->satellite_data, userData) > 0)
 	{
-		rb_node_t* right = root->right;
+		rb_node_t* right = node->right;
 		if(right == NULL)
 		{
-			node = rb_node_create(value, NULL, NULL, root);
-			root->right = node;
+			rb_node_t* new_node = rb_node_create(value, NULL, NULL, node);
+			node->right = new_node;
+			return node;
 		}
 		else
 		{
 			// if right child is not null, then delegate the insertion to the right child/subtree
-			node = rb_node_insert(right, value, compare, userData);
+			node->right = rb_node_insert(right, value, compare, userData);
+			node->right->parent = node;
 		}
 	}
 	else
 	{
-		rb_node_t* left = root->left;
+		rb_node_t* left = node->left;
 		if(left == NULL)
 		{
-			node = rb_node_create(value, NULL, NULL, root);
-			root->left = node;
+			rb_node_t* new_node = rb_node_create(value, NULL, NULL, node);
+			node->left = new_node;
+			return node;
 		}
 		else
 		{
 			// if left child is not null, then delegate the insertion to the left child/subtree
-			node = rb_node_insert(left, value, compare, userData);
+			node->left = rb_node_insert(left, value, compare, userData);
+			node->left->parent = node;
 		}
 	}
-
-	// if the newly added node is not the root node
-	// and if this node is not the second added node
-	if((node != root) && (root->parent != NULL))
+	if (node->color == COLOR_BLACK)
 	{
-		// no adjacent nodes can be red - property voilated
-		if(root->color == COLOR_RED)
+		rb_node_t* parent = node->parent;
+		if(node->left && node->right && (parent == NULL))
 		{
-			// case no 1
-			if((root->parent->left != NULL) && (root->parent->right != NULL))
+			if((node->left->color == COLOR_RED) && (node->right->color == COLOR_RED))
 			{
-				// do recolouring
-				root->color = COLOR_BLACK;
-				if(root->parent->left != root)
-					root->parent->left->color = COLOR_BLACK;
-				else
-					root->parent->right->color = COLOR_BLACK;
+				node->left->color = COLOR_BLACK;
+				node->right->color = COLOR_BLACK;
+				return node;
 			}
-			else
+		}
+		if (node->right && (node->right->color == COLOR_RED))
+		{
+			if (node->right->right && (node->right->right->color == COLOR_RED))
 			{
-				// case 2
-				if(root->parent->right == root)
+				if (parent)
 				{
-					if(root->right == node)
-					{
-						// left rotation
-						if(root->parent->parent != NULL)
-						{
-							if(root->parent->parent->left == root->parent)
-								root->parent->parent->left = root;
-							else // if root->parent->parent->right == root->parent
-								root->parent->parent->right = root;
-						}
-						rb_node_t* t = root->parent;
-						root->parent = root->parent->parent;
-						root->left = t;
-						t->parent = root;
-					}
-					else // if root->left == node
-					{
-						// right rotation
-						root->parent->right = root->left;
-						root->left->parent = root->parent;
-						root->left->right = root;
-						root->parent = root->left;
-						root = root->left;
-
-						// left rotation
-						if(root->parent->parent != NULL)
-						{
-							if(root->parent->parent->left == root->parent)
-								root->parent->parent->left = root;
-							else // if root->parent->parent->right == root->parent
-								root->parent->parent->right = root;
-						}
-						rb_node_t* t = root->parent;
-						root->parent = root->parent->parent;
-						root->left = t;
-						t->parent = root;
-					}
+					if (parent->left == node)
+						parent->left = node->right;
+					else
+						parent->right = node->right;
 				}
-				// case no 3
-				else // if root->parent->left == root
+				node->right->parent = parent;
+				rb_node_t* t = node->right->left;
+				node->parent = node->right;
+				node->right->left = node;
+				node->right = t;
+				if(t != NULL)
+					t->parent = node;
+				node->parent->color = COLOR_BLACK;
+				node->color = COLOR_RED;
+				return node->parent;
+			}
+			else if (node->right->left && (node->right->left->color == COLOR_RED))
+			{
+				rb_node_t* t = node->right;
+				node->right = node->right->left;
+				node->right->left->parent = node;
+				node->right->right = t;
+				t->parent = node->right;
+				if (parent)
 				{
-					if(root->left == node)
-					{
-						// right rotation
-						if(root->parent->parent->left == root->parent)
-							root->parent->parent->left = root;
-						else
-							root->parent->parent->right = root;
-						rb_node_t* t = root->parent;
-						root->parent = root->parent->parent;
-						root->right = t;
-						t->parent = root;
-					}
-					else // if root->right == node
-					{
-						// left rotation
-						root->parent->left = root->right;
-						root->right->parent = root->parent;
-						root->right->left = root;
-						root->parent = root->right;
-						root = root->right;
-
-						// right rotation
-						if(root->parent->parent->left == root->parent)
-							root->parent->parent->left = root;
-						else
-							root->parent->parent->right = root;
-						rb_node_t* t = root->parent;
-						root->parent = root->parent->parent;
-						root->right = t;
-						t->parent = root;
-					}
+					if (parent->left = node)
+						parent->left = node->right;
+					else
+						parent->right = node->right;
 				}
+				node->right->parent = parent;
+				t = node->right->left;
+				node->parent = node->right;
+				node->right->left = node;
+				node->right = t;
+				if(t != NULL)
+					t->parent = node;
+				node->parent->color = COLOR_BLACK;
+				node->color = COLOR_RED;
+				return node->parent;
+			}
+		}
+		else if (node->left && (node->left->color == COLOR_RED))
+		{
+			if (node->left->left && (node->left->left->color == COLOR_RED))
+			{
+				if (parent)
+				{
+					if (parent->left == node)
+						parent->left = node->left;
+					else
+						parent->right = node->left;
+				}
+				node->left->parent = parent;
+				rb_node_t* t = node->left->right;
+				node->parent = node->left;
+				node->left->right = node;
+				node->left = t;
+				if(t != NULL)
+					t->parent = node;
+				node->parent->color = COLOR_BLACK;
+				node->color = COLOR_RED;
+				return node->parent;
+			}
+			else if (node->left->right && (node->left->right->color == COLOR_RED))
+			{
+				rb_node_t* t = node->left;
+				node->left = node->left->right;
+				node->left->right->parent = node;
+				node->left->left = t;
+				t->parent = node->left;
+				if (parent)
+				{
+					if (parent->left = node)
+						parent->left = node->left;
+					else
+						parent->right = node->left;
+				}
+				node->left->parent = parent;
+				t = node->left->right;
+				node->parent = node->left;
+				node->left->right = node;
+				node->left = t;
+				if(t != NULL)
+					t->parent = node;
+				node->parent->color = COLOR_BLACK;
+				node->color = COLOR_RED;
+				return node->parent;
 			}
 		}
 	}
-
-	return root;
+	return node;
 }
 
 rb_node_t* rb_node_remove(rb_node_t* root, void* value, comparer_t compare, void* userData)

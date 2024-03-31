@@ -32,5 +32,26 @@ avl_node_t* avl_node_insert(avl_node_t* root, void* value, comparer_t compare, v
 
 binary_node_t* avl_node_to_binary_node(avl_node_t* node, int data_size)
 {
-	return NULL;
+	// clone the left avl node to the binary node
+	avl_node_t* left = node->left;
+	binary_node_t* left_clone = NULL;
+	if(left != NULL)
+		left_clone = avl_node_to_binary_node(left, data_size);
+
+	// clone the right avl node to the binary node
+	avl_node_t* right = node->right;
+	binary_node_t* right_clone = NULL;
+	if(right != NULL)
+		right_clone = avl_node_to_binary_node(right, data_size);
+
+	// clone the node's value
+	void* data_clone = NULL;
+	if(node->satellite_data != NULL)
+	{
+		data_clone = malloc(data_size);
+		memcpy(data_clone, node->satellite_data, data_size);
+	}
+
+	// create the binary node clone of this avl node 
+	return binary_node_create(data_clone, left_clone, right_clone);
 }

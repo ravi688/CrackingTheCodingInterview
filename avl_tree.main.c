@@ -198,7 +198,7 @@ int main(int argc, const char* argv[])
 
 	binary_node_t* bt = avl_node_to_binary_node(avl, sizeof(int));
 
-	puts("After conversion: ");
+	puts("After AVL Balancing: ");
 	binary_node_dump(bt, TRAVERSE_CALLBACK(print_node_as_int), NULL);
 
 	free(avl_node_destroy(avl));

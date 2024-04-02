@@ -183,10 +183,98 @@ void problem3()
 	//			return null
 }
 
+// 16.4 Design an algorithm to figure out if someone has won a game of tic-tac-toe
+
+void problem4()
+{
+	//	Solution no 1
+	//
+	//	get_int(x):
+	//		switch x:
+	//			case 'O' : return 1
+	//			case 'X' : return -1
+	//			default: return 0
+	//
+	//	has_won(board):
+	//		for i = 0 until board.size:
+	//			sum = 0
+	//			for j = 0 until board.size:
+	//				sum += get_int(board[i][j])
+	//			if sum == board.size:
+	//				return 'O' won
+	//			else if sum == -board.size:
+	//				return 'X' won
+	//		for i = 0 until board.size:
+	//			sum = 0
+	//				for j = 0 until board.size:
+	//					sum += get_int(board[j][i])
+	//			if sum == board.size:
+	//				return 'O' won
+	//			else if sum == -board.size:
+	//				return 'X' won
+	//		sum1 = 0
+	//		sum2 = 0
+	//		for i = 0 until board.size:
+	//			sum1 += board[i][i]
+	//			sum2 += board[i][board.size - i - 1]
+	//		if sum1 == board.size || sum2 == board.size:
+	//			return 'O' won
+	//		else if sum1 == -board.size || sum2 == -board.size:
+	//			reutrn 'X' won
+	//
+	//	Solution no 2 (merge all three loops into one):
+	//
+	//	has_won(board):
+	//		sum3 = 0
+	//		sum4 = 0
+	//		for i = 0 until board.size:
+	//			sum3 += get_int(board[i][i])
+	//			sum4 += get_int(board[i][board.size - i - 1])
+	//			sum1 = 0
+	//			sum2 = 0
+	//			for j = 0 until board.size:
+	//				sum1 += get_int(board[i][j])
+	//				sum1 += get_int(board[j][i])
+	//			if sum1 == board.size || sum2 == board.size:
+	//				return 'O' won
+	//			else if sum1 == -board.size || sum2 == -board.size:
+	//				return 'X' won
+	//		if sum3 == board.size || sum4 == board.size:
+	//			return 'O' won
+	//		else if sum3 == -board.size || sum4 == -board.size:
+	//			return 'X' won
+	//
+	// 	Solution no 3 (incremental):
+	//		
+	//	has_won(board, x, y):
+	//		if x == y:
+	//			sum1 = 0
+	//			sum2 = 0
+	//			for i = 0 until board.size:
+	//				sum1 += get_int(board[i][i])
+	//				sum2 += get_int(board[i][board.size - i - 1])
+	//			if sum1 == board.size || sum2 == board.size:
+	//				return 'O' won
+	//			else if sum1 == -board.size || sum2 == board.size:
+	//				return 'X' won
+	//		sum1 = 0
+	//		sum2 = 0
+	//		for i = until board.size
+	//			sum1 += get_int(board[y][i])
+	//			sum2 += get_int(board[i][x])
+	//		if sum1 == board.size || sum2 == board.size:
+	//			return 'O' won
+	//		else if sum1 == -board.size || sum2 == -board.size:
+	//			return 'X' won
+
+}
+
 int main()
 {
 	problem1<int>();
 	problem1<float>();
 	problem2();
+	problem3();
+	problem4();
 	return 0;
 }

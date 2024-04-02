@@ -140,6 +140,49 @@ void problem2()
 	std::cout << "\t Frequency of \"" << word << "\" in \"" << book << "\" is: " << freq << std::endl; 
 }
 
+
+// 16.3 Given two straight line segments (represented as a start point and an end point), compute
+// the point of intersection, if any.
+
+void problem3()
+{
+	// Solution no 1 (using line equation and internal division check):
+	//	
+	//	Math:
+	//		(y - b1) / (x - a1) = (d1 - b1) / (c1 - a1) = m1
+	//	 	(y - b2) / (x - a2) = (d2 - b2) / (c2 - a2) = m2
+	//		y = m1 * (x - a1) + b1    - (1)
+	//		y = m2 * (x - a2) + b2    - (2)
+	//		Solving eqn (1) and (2):
+	//			m1 * (x - a1) + b1 = m2 * (x - a2) + b2
+	//			x *(m1 - m2) - m1 * a1 + b1 = -m2 * a2 + b2
+	//			x = (m1 * a1 - b1 + b2 - m2 * a2) / (m1 - m2)
+	//		Putting the value of x into (1), we can get the value of y corresponding to the x
+	//	
+	//		To check if the point of intersection is also the point of intersection of the two segments,
+	//		We can check if the point internally divides either of segments.
+	//			Formula for internal division is:
+	//					x = (m * x1 + n * x2) / (m + n)
+	//					y = (m * y1 + n * y2) / (m + n)
+	//			So,
+	//					m * x + n * x = m * x1 + n * x2
+	//					m * (x - x1) + n * (x - x2) = 0    - (1)
+	//			Similarly, m * (y - y1) + n * (y - y2) = 0    - (2)
+	//			Solving (1) and (2), we can get the ratios m and n.
+	//		If either of m or n is negative, that means the point of intersection lies off the segments.
+	//
+	// Soution no 2 (using line equation and opposite side check):
+	//		use line segments as L { (x1, y1), (x2, y2) }
+	//		L(x, y) = m * (x - x1) + y1 - y, where m = (y2 - y1) / (x2 - x1)
+	//		is_L2end = L1(L2.end.x, L2.end.y) < 0
+	//		is_L2begin = L1(L2.start.x, L2.start.y) < 0
+	//		if (is_L2end XOR is_L2start) && (is_L1end XOR is_L1start):
+	//			point = calculate_point_of_intersection(seg1, seg2)
+	//			return point 
+	//		else
+	//			return null
+}
+
 int main()
 {
 	problem1<int>();

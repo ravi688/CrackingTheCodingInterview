@@ -349,6 +349,45 @@ void problem6()
 	//		return min_diff
 }
 
+template<typename T>
+void problem7();
+
+template<>
+void problem7<int>()
+{
+	// Solution no 1:
+	//		get_max(a, b):
+	//				diff = a - b
+	//				index = (unsigned)(diff & (1 << 31)) >> 31
+	//				arr[2] = { a, b }
+	//				return arr[index]
+
+	std::cout << "Problem 7 <int>: " << std::endl;
+
+	int a = 200;
+	int b = -345;
+	int diff = a - b;
+	int index = ((unsigned int)(diff & (1 << 31))) >> 31;
+	int arr[2] = { a, b };
+	int max = arr[index];
+
+	std::cout << "\t Max of " << a << " and " << b << " is: " << max << std::endl;
+}
+
+template<>
+void problem7<float>()
+{
+	std::cout << "Problem 7 <float>: " << std::endl;
+	float a = 200;
+	float b = 345;
+	int diff = a - b;
+	int index = ((unsigned int)(diff & (1 << 31))) >> 31;
+	float arr[2] = { a, b };
+	float max = arr[index];
+
+	std::cout << "\t Max of " << a << " and " << b << " is: " << max << std::endl;
+}
+
 int main()
 {
 	problem1<int>();
@@ -357,5 +396,8 @@ int main()
 	problem3();
 	problem4();
 	problem5();
+	problem6();
+	problem7<int>();
+	problem7<float>();
 	return 0;
 }

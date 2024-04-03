@@ -269,6 +269,55 @@ void problem4()
 
 }
 
+
+// 16.5 Write an algorithm which computes the number of trailing zeros in n factorial
+
+void problem5()
+{
+	// 0! = 1
+	// 1! = 1
+	// 2! = 2
+	// 3! = 6
+	// 4! = 4 x 3 x 2 x 1 = 24
+	// 5! = 5 x 4 x 3 x 2 x 1 = 120
+	// 6! = 6 x 5 x 4 x 3 x 2 x 1 = 720
+	// 7! = 7 x 6 x 5 x 4 x 3 x 2 x 1 = 5040
+
+	// Solution no 1 (using legendre's formula for computing prime factorization):
+	//
+	// 	get_num_powers(n, t)
+	//		powers = 0
+	//		while true:
+	//			c = floor(n / t)
+	//			if c == 0:
+	//				break
+	//			else:
+	//				t *= t
+	//				powers += c
+	//		return powers
+	//
+	//	get_num_trailing_zeros(n):
+	//		powers_2 = get_num_powers(n, 2)
+	//		powers_5 = get_num_powers(n, 5)
+	//		return min(powers_2, powers_5)
+	//
+	// Solution no 2 (calculate factorial first, and check how many times it is divisible by 10)
+	//	
+	//	get_factorial(n):
+	//		t = 1
+	//		for i = 2; i <=n; i++:
+	//			t *= i
+	//		return t
+	//	
+	//	get_num_trailing_zeros(n):
+	//		f = get_factorial(n)
+	//		z = -1
+	//		while(f != 0)
+	//			z++
+	//			f /= 10
+	//		return max(z, 0)
+}
+
 int main()
 {
 	problem1<int>();
@@ -276,5 +325,6 @@ int main()
 	problem2();
 	problem3();
 	problem4();
+	problem5();
 	return 0;
 }

@@ -318,6 +318,37 @@ void problem5()
 	//		return max(z, 0)
 }
 
+void problem6()
+{
+	// Solution no 1 (brute force):
+	//
+	//  Time complexity: O(arr1.size() * arr2.size())
+	//	smallest_diff(arr1, arr2):
+	//		min_diff = 0
+	//		for i = 0; i < arr1.size(); i++:
+	//			for j = 0; j < arr2.size(); j++:
+	//				diff = abs(arr1[i] - arr2[j])
+	//				if min_diff > diff:
+	//					min_diff = diff
+	//		return min_diff
+	//
+	// Solution no 2:
+	//
+	//	smallest_diff(arr1, arr2):
+	//		sort_ascending(arr1)
+	//		sort_ascending(arr2) 
+	//		min_diff = 0
+	//		while a < arr1.size() && b < arr2.size():
+	//			diff = abs(arr1[a] - arr2[b])
+	//				if min_diff > diff:
+	//					min_diff = diff
+	//			if arr1[a] > arr2[b]:
+	//				b++
+	//			else:
+	//				a++
+	//		return min_diff
+}
+
 int main()
 {
 	problem1<int>();

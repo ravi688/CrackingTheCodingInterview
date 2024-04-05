@@ -349,6 +349,9 @@ void problem6()
 	//		return min_diff
 }
 
+// 16.7 Write a method that finds the maximum of two numbers. You should not use if-else or any other
+// comparison operator.
+
 template<typename T>
 void problem7();
 

@@ -352,6 +352,21 @@ void problem6()
 template<typename T>
 void problem7();
 
+int flip_bit(int bit)
+{
+	return 1 ^ bit;
+}
+
+void problem7_sol2(int a, int b)
+{
+	std::cout<< "\t Solution no 2: " << std::endl;
+	int diff = a - b;
+	int index = ((unsigned int)(diff >> 31)) & 0x1;
+	int findex = flip_bit(index);
+	int max = a * findex + b * index;
+	std::cout << "\t Max of " << a << " and " << b << " is: " << max << std::endl;
+}
+
 template<>
 void problem7<int>()
 {
@@ -361,6 +376,15 @@ void problem7<int>()
 	//				index = (unsigned)(diff & (1 << 31)) >> 31
 	//				arr[2] = { a, b }
 	//				return arr[index]
+	//
+	// Solution no 2:
+	//		flip(x):
+	//			return 1 ^ x
+	//		get_max(a, b):
+	//			diff = a - b
+	//			index = ((unsigned int)(diff >> 31)) & 0x1
+	//			findex = flip(index)
+	//			return findex * a + index * b
 
 	std::cout << "Problem 7 <int>: " << std::endl;
 
@@ -372,6 +396,8 @@ void problem7<int>()
 	int max = arr[index];
 
 	std::cout << "\t Max of " << a << " and " << b << " is: " << max << std::endl;
+
+	problem7_sol2(a, b);
 }
 
 template<>

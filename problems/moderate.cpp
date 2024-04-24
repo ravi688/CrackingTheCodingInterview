@@ -1,6 +1,7 @@
 #include <iostream>
 #include <cstring> // strlen
 #include <ctype.h> // tolower
+#include <stdint.h> // uint32_t
 
 
 // 16.1 Write a function to swap a number in place (that, without temporary variables)
@@ -417,6 +418,90 @@ void problem7<float>()
 	std::cout << "\t Max of " << a << " and " << b << " is: " << max << std::endl;
 }
 
+void problem8()
+{
+	// 3453434
+	// Three million
+	// Four hundred fifty three thousands
+	// Four hundred thirty four
+
+	//
+	//  units = { "", "One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine" }
+	//	tens1 = { "Ten", "Eleven", "Twelve", "Thirteen", "Fourteen", "Fifteen", "Sixteen", "Seventeen",
+	//	  "Eighteen", "Nineteen" }
+	//	tens2 = { "Twenty", "Thirty", "Fourty", "Fifty", "Sixty", "Seventy", "Eighty", "Ninety" }
+	//	arr1 = { "", "Thousands", "Millions", "Billions", "Trillions" } 	
+	//	str = to_string(n)
+	// 	len = strlen(str)
+	// 	for i = len - 1; i >= 0; --i
+	//		ch = str[len - i - 1]
+	//		k = i % 3
+	//		if k != 1:
+	//			print(units[ch - '0'])
+	//			putchar(' ')
+	//			if k == 2:
+	//				print('Hundred ')
+	//		else:
+	//			if ch == '1':
+	//				--i
+	//				ch = str[len - i - 1]
+	//				print(tens1[ch - '0'])
+	//				putchar(' ')
+	//			else:
+	//				print(tens2[ch - '2'])
+	//				putchar(' ')
+	//		if k == 0:
+	//			k = i / 3
+	//			print(arr1[k])
+	//			putchar(' ')
+	
+	uint64_t n = 3453434;
+
+	const char* units[] = { "", "One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine" };
+	const char* tens1[] = { "Ten", "Eleven", "Twelve", "Thirteen", "Fourteen", "Fifteen", "Sixteen", "Seventeen", "Eighteen", "Nineteen" };
+	const char* tens2[] = { "Twenty", "Thirty", "Fourty", "Fifty", "Sixty", "Seventy", "Eighty", "Ninety" };
+	const char* arr1[]  = { "", "Thousands", "Millions", "Billions", "Trillions" };
+
+	char str[16];
+	sprintf(str, "%llu", n);
+	int len = strlen(str);
+	for(int i = len - 1; i >= 0; --i)
+	{
+		char ch = str[len - i - 1];
+		if(ch == '0')
+			continue;
+		int k = i % 3;
+		if(k != 1)
+		{
+			std::cout << units[ch - '0'] << " ";
+			if(k == 2)
+			{
+				std::cout << "Hundred ";
+			}
+		}
+		else
+		{
+			if(ch == '1')
+			{
+				--i;
+				ch = str[len - i - 1];
+				std::cout << tens1[ch - '0'] << " ";
+			}
+			else
+			{
+				std::cout << tens2[ch - '2'] << " ";
+			}
+		}
+		if (k == 0)
+		{
+			k = i / 3;
+			std::cout << arr1[k] << " ";
+		}
+	}
+
+	std::cout << std::endl;
+}
+
 int main()
 {
 	problem1<int>();
@@ -428,5 +513,6 @@ int main()
 	problem6();
 	problem7<int>();
 	problem7<float>();
+	problem8();
 	return 0;
 }

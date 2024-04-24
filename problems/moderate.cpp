@@ -418,6 +418,7 @@ void problem7<float>()
 	std::cout << "\t Max of " << a << " and " << b << " is: " << max << std::endl;
 }
 
+// English Int: Given any integer, print an English phrase that describes the integer (e.g., "OneThousand, Two Hundred Thirty Four").
 void problem8()
 {
 	// 3453434

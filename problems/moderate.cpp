@@ -555,6 +555,23 @@ void problem9()
 	//			for i = 0 until a:
 	//				r += m
 	//			ret (s < 0) ? flip_sign(r) : r
+	//
+	// Subtract:
+	//	Solution no 1:
+	//		flip_sign(a):
+	//			ret a + INT_MAX	
+	//		sub(a, b):
+	//			ret a + flip_sign(b)
+	// 	Solution no 2:
+	//		flip_sign(a):
+	//			t = (a > 0) ? -1 : 1
+	//			n = 0
+	//			while a != 0:
+	//				n += t
+	//				a += t
+	//			ret n
+	//		sub(a, b):
+	//			ret a + flip_sign(b)
 
 
 	int64_t a = 2324;

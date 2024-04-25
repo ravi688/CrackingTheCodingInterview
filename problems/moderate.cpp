@@ -503,6 +503,51 @@ void problem8()
 	std::cout << std::endl;
 }
 
+int64_t multiply(int64_t a, int64_t b)
+{
+	a = std::abs(a);
+	int64_t m = std::max(a, b);
+	int64_t res = 0;
+	for(int64_t i = 0; i < ((m == a) ? b : a); i++)
+		res += m;
+	return res;
+}
+
+void problem9()
+{
+	// Operations
+	// 1. Multiply
+	// 2. Subtract
+	// 3. Divide
+
+	// Multiply:
+	//	Solution no 1:
+	//		a = 2324
+	//		b = 8
+	//		s = (a ^ b) >> (INT_BITS - 1) // arithemtic right shift by INT_BITS - 1 bits
+	//		a = abs(a)
+	//		b = abs(b)
+	//		m = max(a, b)
+	//		a = (m == a) ? b : a
+	//		r = 0
+	//		for i = 0 until a:
+	//			r += m
+	//		r += INT_MAX & s
+	//		ret r
+
+	int64_t a = 2324;
+	int64_t b = 343;
+
+	int64_t c = multiply(a, b);
+	std::cout << "Mul(" << a <<"," << b <<") = " << c << std::endl;
+
+	c = subtract(a, b);
+	std::cout << "Sub(" << a <<"," << b <<") = " << c << std::endl;
+	
+	c = divide(a, b);
+	std::cout << "Div(" << a <<"," << b <<") = " << c << std::endl;
+}
+
 int main()
 {
 	problem1<int>();
@@ -515,5 +560,6 @@ int main()
 	problem7<int>();
 	problem7<float>();
 	problem8();
+	problem9();
 	return 0;
 }

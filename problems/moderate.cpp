@@ -572,8 +572,22 @@ void problem9()
 	//			ret n
 	//		sub(a, b):
 	//			ret a + flip_sign(b)
-
-
+	//
+	// Divide: Division is just the reverse of multiplication
+	//	Solution no 1:
+	//		a = 2324 // dividend
+	//		b = 8 // divisor
+	//		s = (a ^ b) >> (INT_BITS - 1) // arithemtic right shift by INT_BITS - 1 bits
+	//		a = abs(a)
+	//		b = abs(b)
+	//		r = 0
+	//		k = 0
+	//		while k != a:
+	//			r += 1
+	//			k += b
+	//		r += INT_MAX & s
+	//		ret r
+	//
 	int64_t a = 2324;
 	int64_t b = 343;
 

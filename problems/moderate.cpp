@@ -534,6 +534,28 @@ void problem9()
 	//			r += m
 	//		r += INT_MAX & s
 	//		ret r
+	//
+	//	Solution no 2:
+	//		flip_sign(a):
+	//			t = (a > 0) ? -1 : 1
+	//			neg = 0
+	//			while a != 0:
+	//				neg += t
+	//				a += t
+	//		ret neg
+	//		mul(a, b):
+	//			a = 2324
+	//			b = 8
+	//			s = (a ^ b) >> (INT_BITS - 1)
+	//			a = abs(a)
+	//			b = abs(b)
+	//			m = max(a, b)
+	//			a = (m == a) ? b : a
+	//			r = 0
+	//			for i = 0 until a:
+	//				r += m
+	//			ret (s < 0) ? flip_sign(r) : r
+
 
 	int64_t a = 2324;
 	int64_t b = 343;

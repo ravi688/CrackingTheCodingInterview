@@ -640,6 +640,37 @@ void problem9()
 	std::cout << "Div(" << a <<"," << b <<") = " << c << std::endl;
 }
 
+void problem10()
+{
+	// Solution no 1 (Brute Force):
+	//
+	//	get_num_people(year, list)
+	//		num_people = 0:
+	//		for i = 0 until list.count():
+	//			pair = list.get(i)
+	//			if year >= pair.l && year <= pair.h:
+	//				num_people++
+	//		ret num_people
+	//
+	//	most_living(list):
+	//		max_l = 0
+	//		max_h = 0
+	//		for i = 0 until list.count():
+	//			if max_h < list.get(i).h:
+	//				max_h = list.get(i).h
+	//			if min_l < list.get(i).l:
+	//				min_l = list.get(i).l
+	//		max_num_people = 0
+	//		max_live_year = max_l
+	//		for i = max_l until equals max_h:
+	//			num_people = get_num_people(i, list)
+	//			if max_num_people < num_people:
+	//				max_num_people = num_people
+	//				max_live_year = i 
+	//		ret max_live_year
+	//
+}
+
 int main()
 {
 	problem1<int>();
@@ -653,5 +684,6 @@ int main()
 	problem7<float>();
 	problem8();
 	problem9();
+	problem10();
 	return 0;
 }

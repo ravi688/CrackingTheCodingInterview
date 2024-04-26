@@ -2,6 +2,7 @@
 #include <cstring> // strlen
 #include <ctype.h> // tolower
 #include <stdint.h> // uint32_t
+#include <limits> // std::numeric_limits<int64_t>::max()
 
 
 // 16.1 Write a function to swap a number in place (that, without temporary variables)
@@ -503,14 +504,49 @@ void problem8()
 	std::cout << std::endl;
 }
 
+int64_t flip_sign(int64_t a)
+{
+	// we also might calculate two's complement by ~a +1
+	int t = (a < 0) ? 1 : -1;
+	int64_t n = 0;
+	while(a != 0)
+	{
+		n += t;
+		a += t;
+	}
+	return n;
+}
+
 int64_t multiply(int64_t a, int64_t b)
 {
+	int64_t s = (a ^ b) >> (63);
 	a = std::abs(a);
+	b = std::abs(b);
 	int64_t m = std::max(a, b);
+	a = (m == a) ? b : a;
 	int64_t res = 0;
-	for(int64_t i = 0; i < ((m == a) ? b : a); i++)
+	for(int64_t i = 0; i < a; i++)
 		res += m;
-	return res;
+	return (s < 0) ? flip_sign(res) : res;
+}
+
+int64_t subtract(int64_t a, int64_t b)
+{
+	return a + flip_sign(b);
+}
+
+int64_t divide(int64_t a, int64_t b)
+{
+	int64_t s = (a ^ b) >> 63;
+	a = std::abs(a);
+	b = std::abs(b);
+	int64_t r = 0;
+	while(a > b)
+	{
+		a -= b;
+		r += 1;
+	}
+	return (s < 0) ? flip_sign(r) : r;
 }
 
 void problem9()
@@ -521,7 +557,7 @@ void problem9()
 	// 3. Divide
 
 	// Multiply:
-	//	Solution no 1:
+	//	Solution no 1: (Doesn't work!)
 	//		a = 2324
 	//		b = 8
 	//		s = (a ^ b) >> (INT_BITS - 1) // arithemtic right shift by INT_BITS - 1 bits
@@ -585,11 +621,11 @@ void problem9()
 	//		while k != a:
 	//			r += 1
 	//			k += b
-	//		r += INT_MAX & s
+	//		r += INT_MAX & s // doesn't work
 	//		ret r
 	//
-	int64_t a = 2324;
-	int64_t b = 343;
+	int64_t a = 9;
+	int64_t b = -343;
 
 	int64_t c = multiply(a, b);
 	std::cout << "Mul(" << a <<"," << b <<") = " << c << std::endl;

@@ -549,6 +549,9 @@ int64_t divide(int64_t a, int64_t b)
 	return (s < 0) ? flip_sign(r) : r;
 }
 
+
+// Operations: Write methods to implement the multiply, subtract, and divide operations for integers. 
+// The results of all of these are integers. Use only the add operator
 void problem9()
 {
 	// Operations

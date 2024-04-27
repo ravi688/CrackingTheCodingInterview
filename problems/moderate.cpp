@@ -695,6 +695,30 @@ void problem10()
 	//			if max_alive < alive:
 	//				max_alive = alive
 	//		ret max_alive
+	//
+	// Solution no 3 (Can we optimize further solve it in linear time?):
+	//
+	//	Time Complexity: O(num_people + num_people + (max_h - max_l))
+	//					 O(2 * num_people + (max_h - max_l))
+	//					 O(num_people + (max_h - max_l))
+	//	most_living(list):
+	//		max_l = 0
+	//		max_h = 0
+	//		for i = 0 until list.count():
+	//			if max_h < list.get(i).h:
+	//				max_h = list.get(i).h
+	//			if min_l < list.get(i).l:
+	//				min_l = list.get(i).l
+	//		map[max_h - max_l]
+	//		for i = 0 until list.count():
+	//			pair = list.get(i)
+	//			map[pair.l - min_l] += 1
+	//			map[pair.h - min_l] -= 1
+	//		max_alive = 0
+	//		for i = until map.size():
+	//			if max_alive < map[i]:
+	//				max_alive = map[i]
+	//		ret max_alive
 }
 
 int main()

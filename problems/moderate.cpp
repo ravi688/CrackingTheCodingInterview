@@ -4,6 +4,7 @@
 #include <stdint.h> // uint32_t
 #include <limits> // std::numeric_limits<int64_t>::max()
 #include <queue> // std::queue<int>
+#include <map> // std::map<int, int>
 #include <inttypes.h>
 
 
@@ -757,6 +758,18 @@ namespace Problem11
 		return queue;
 	}
 
+	std::map<int, int> get_union(std::queue<int>& queue)
+	{
+		std::map<int, int> map;
+		while(!queue.empty())
+		{
+			int len = queue.front();
+			queue.pop();
+			map[len] = len;
+		}
+		return map;
+	}
+
 	void solution1()
 	{
 		int short_len = 3;
@@ -765,12 +778,11 @@ namespace Problem11
 		std::cout << "Problem 11:\n\tSolution no 1: " << std::endl;
 		std::cout << "\t\tInput: short_len = " << short_len << ", large_len = " << large_len << ", k = " << k << std::endl;
 		std::queue<int>& queue = get_max(short_len, large_len, k);
-		std::cout << "\t\tTotal: " << queue.size() << " Possible lengths" << std::endl;
-		while(!queue.empty())
+		std::map<int, int> map = get_union(queue);
+		std::cout << "\t\tTotal: " << map.size() << " Possible lengths" << std::endl;
+		for(std::pair<int, int> pair : map)
 		{
-			int len = queue.front();
-			queue.pop();
-			std::cout << len << ", ";
+			std::cout << pair.first << ", ";
 		}
 		std::cout << std::endl;
 	}
@@ -797,7 +809,7 @@ namespace Problem11
 		//					 O((2^(k) - 1) / (2 - 1))
 		//					 O(2^k - 1)
 		//					 O(2^k)
-		//	get_max(short, large, k):
+		//	_get_max(short, large, k):
 		//		if k == 0:
 		//			queue
 		//			ret queue
@@ -806,7 +818,7 @@ namespace Problem11
 		//			queue.enque(short)
 		//			queue.enque(large)
 		//			ret queue
-		//		queue = get_max(k - 1)
+		//		queue = _get_max(k - 1)
 		//		count = queue.count()
 		//		while count > 0:
 		//			len = queue.deque()
@@ -814,6 +826,14 @@ namespace Problem11
 		//			queue.enque(len + short)
 		//			queue.enque(len + large)
 		//		ret queue
+		// 	get_max(short, large, k):
+		//		queue = _get_max(short, large, k)
+		//		map = { }
+		//		while !queue.empty():
+		//			len = queue.deque()
+		//			map[len] = len
+		//		for pair in map:
+		//			print(pair.first)
 		//
 		// Solution no 2:
 		// Obervation:

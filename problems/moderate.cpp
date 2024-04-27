@@ -857,6 +857,41 @@ namespace Problem11
 	}
 }
 
+namespace Problem12
+{
+	void solutions()
+	{
+		// Solution no 1:
+		//
+		//
+		// 	get_id(str):
+		//		static unordered_map<char*, int> map = { }
+		//		static counter = 1
+		//		id = map[str]
+		//		if id == 0:
+		//			map[str] = counter++
+		//			ret counter
+		//		else:
+		//			ret id
+		//		
+		// 	print_encoding(xml_element):
+		//		print(get_id(xml_element.tag_name))
+		//		print(' ')
+		//		for each attribute in xml_element:
+		//			print(get_id(attribute.attr_name))
+		//			print(' ')
+		//			print(attribute.attr_value)
+		//			print(' ')
+		//		print('0')
+		//		if xml_element.value != null:
+		//			print(xml_element.value)
+		//			print(' ')
+		//		for each children in xml_element:
+		//			print_encoding(children)
+		//		ret
+	}
+}
+
 int main()
 {
 	problem1<int>();
@@ -872,5 +907,6 @@ int main()
 	problem9();
 	problem10();
 	Problem11::problem11();
+	Problem12::solutions();
 	return 0;
 }

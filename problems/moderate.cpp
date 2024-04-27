@@ -3,6 +3,8 @@
 #include <ctype.h> // tolower
 #include <stdint.h> // uint32_t
 #include <limits> // std::numeric_limits<int64_t>::max()
+#include <queue> // std::queue<int>
+#include <inttypes.h>
 
 
 // 16.1 Write a function to swap a number in place (that, without temporary variables)
@@ -465,7 +467,7 @@ void problem8()
 	const char* arr1[]  = { "", "Thousands", "Millions", "Billions", "Trillions" };
 
 	char str[16];
-	sprintf(str, "%llu", n);
+	sprintf(str, PRIu64, n);
 	int len = strlen(str);
 	for(int i = len - 1; i >= 0; --i)
 	{
@@ -726,6 +728,78 @@ void problem10()
 	//		ret max_alive
 }
 
+namespace Problem11
+{
+	std::queue<int>& get_max(int short_len, int large_len, std::size_t k)
+	{
+		if (k == 0)
+		{
+			static std::queue<int> queue;
+			return queue;
+		}
+		else if(k == 1)
+		{
+			static std::queue<int> queue;
+			queue.push(short_len);
+			queue.push(large_len);
+			return queue;
+		}
+		std::queue<int>& queue = get_max(short_len, large_len, k - 1);
+		std::size_t count = queue.size();
+		while (count > 0)
+		{
+			int len = queue.front();
+			queue.pop();
+			--count;
+			queue.push(len + short_len);
+			queue.push(len + large_len);
+		}
+		return queue;
+	}
+
+	void solution1()
+	{
+		int short_len = 3;
+		int large_len = 4;
+		std::size_t k = 2;
+		std::cout << "Problem 11:\n\tSolution no 1: " << std::endl;
+		std::cout << "\t\tInput: short_len = " << short_len << ", large_len = " << large_len << ", k = " << k << std::endl;
+		std::queue<int>& queue = get_max(short_len, large_len, k);
+		std::cout << "\t\tTotal: " << queue.size() << " Possible lengths" << std::endl;
+		while(!queue.empty())
+		{
+			int len = queue.front();
+			queue.pop();
+			std::cout << len << ", ";
+		}
+		std::cout << std::endl;
+	}
+
+	void problem11()
+	{
+		// Solution no 1:
+		//	get_max(short, large, k):
+		//		if k == 0:
+		//			queue
+		//			ret queue
+		//		elif k == 1:
+		//			queue
+		//			queue.enque(short)
+		//			queue.enque(large)
+		//			ret queue
+		//		queue = get_max(k - 1)
+		//		count = queue.count()
+		//		while count > 0:
+		//			len = queue.deque()
+		//			queue.enque(len + short)
+		//			queue.enque(len + large)
+		//		ret queue
+		//			
+
+		solution1();
+	}
+}
+
 int main()
 {
 	problem1<int>();
@@ -740,5 +814,6 @@ int main()
 	problem8();
 	problem9();
 	problem10();
+	Problem11::problem11();
 	return 0;
 }

@@ -729,6 +729,9 @@ void problem10()
 	//		ret max_alive
 }
 
+// Diving Board: You are building a diving board by placing a bunch of planks of wood end-to-end.
+// There are two types of planks, one of length shorter and one of length longer. You must use
+// exactly K planks of wood. Write a method to generate all possible lengths for the diving board
 namespace Problem11
 {
 	std::queue<int>& get_max(int short_len, int large_len, std::size_t k)

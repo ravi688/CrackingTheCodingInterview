@@ -761,7 +761,7 @@ namespace Problem11
 	{
 		int short_len = 3;
 		int large_len = 4;
-		std::size_t k = 2;
+		std::size_t k = 5;
 		std::cout << "Problem 11:\n\tSolution no 1: " << std::endl;
 		std::cout << "\t\tInput: short_len = " << short_len << ", large_len = " << large_len << ", k = " << k << std::endl;
 		std::queue<int>& queue = get_max(short_len, large_len, k);
@@ -775,9 +775,28 @@ namespace Problem11
 		std::cout << std::endl;
 	}
 
+	void solution2()
+	{
+		int short_len = 3;
+		int large_len = 4;
+		std::size_t k = 5;
+		std::cout << "Problem 11:\n\tSolution no 2: " << std::endl;
+		std::cout << "\t\tInput: short_len = " << short_len << ", large_len = " << large_len << ", k = " << k << std::endl;
+		for(std::size_t i = 0; i <= k; i++)
+		{
+			long int len = i * (short_len - large_len) + k * large_len;
+			std::cout << len << ", ";
+		}
+		std::cout << std::endl;
+	}
+
 	void problem11()
 	{
 		// Solution no 1:
+		//	Time Complexity: O(1 + 2 + 2^2 + ... + 2^(k - 1))
+		//					 O((2^(k) - 1) / (2 - 1))
+		//					 O(2^k - 1)
+		//					 O(2^k)
 		//	get_max(short, large, k):
 		//		if k == 0:
 		//			queue
@@ -791,12 +810,27 @@ namespace Problem11
 		//		count = queue.count()
 		//		while count > 0:
 		//			len = queue.deque()
+		//			--count
 		//			queue.enque(len + short)
 		//			queue.enque(len + large)
 		//		ret queue
-		//			
+		//
+		// Solution no 2:
+		// Obervation:
+		//	n = shorter planks
+		//	m = larger planks
+		//	n + m = k number of any planks
+		//	n * short_len + m * large_len = len
+		//	n * short_len + (k - n) * large_len = len
+		//	n * (short_len - large_len) + k * large_len = len
+		//
+		//	Time Complexity: O(k)
+		// 	get_max(short, large, k):
+		//		for i = 0 until equals k:
+		//			print(i * (short_len - large_len) + k * large_len)
 
 		solution1();
+		solution2();
 	}
 }
 

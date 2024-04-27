@@ -644,6 +644,7 @@ void problem10()
 {
 	// Solution no 1 (Brute Force):
 	//
+	// 	Time Complexity: O(num_people)
 	//	get_num_people(year, list)
 	//		num_people = 0:
 	//		for i = 0 until list.count():
@@ -652,6 +653,8 @@ void problem10()
 	//				num_people++
 	//		ret num_people
 	//
+	// 	Time Complexity: O(num_people * (max_h - max_l) + num_people)
+	//					 O(num_people * (max_h - max_l))
 	//	most_living(list):
 	//		max_l = 0
 	//		max_h = 0
@@ -669,6 +672,29 @@ void problem10()
 	//				max_live_year = i 
 	//		ret max_live_year
 	//
+	// Solution no 2:
+	//
+	// 	Time Complexity: O(num_people + num_people * log(num_people) + 2 * num_people)
+	//					 O(3 * num_people + num_people * log(num_people))
+	//					 O(num_people * log(num_people))
+	//	most_living(list):
+	//		arr[list.count * 2]
+	//		for i = 0 until list.count():
+	//			arr[2 * i + 0] = list.get(i).l
+	//			arr[2 * i + 1] = -list.get(i).h
+	//		sort(arr, (v1, v2) { ret abs(v1) > abs(v2) }) // sort in ascending order
+	//		max_alive = 0
+	//		for i = 0 until arr.size():
+	//			year = abs(arr[i])
+	//			while year == abs(arr[i]):
+	//				if arr[i] > 0:
+	//					alive += 1
+	//				else if arr[i] < 0:
+	//					alive -= 1
+	//				i++
+	//			if max_alive < alive:
+	//				max_alive = alive
+	//		ret max_alive
 }
 
 int main()

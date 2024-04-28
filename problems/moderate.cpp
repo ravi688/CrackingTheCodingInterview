@@ -927,6 +927,59 @@ namespace Problem13
 	}
 }
 
+namespace Problem14
+{
+	void solutions()
+	{
+		// Solution no 1 (this doesn't handle overlapping points):
+		//
+		//	Worst case Time Complexity: O(N * (N + 1) / 2 + N * (N + 1) / 2) = O(N * (N + 1)) = O(N^2)
+		//	Best case Time Complexity: O(N * (N + 1) / 2 + 1) = O(N * (N + 1) / 2) = O(N^2)
+		//	
+		//	Solution no 1:
+		//		gcd(a, b):
+		//			m = min(a, b)
+		//			max = 1
+		//			for i = 2 until equals m:
+		//				if a % i == 0 && b % i == 0:
+		//					max = i
+		//			ret max
+		//	Solution no 2:
+		//		gcd(a, b):
+		//			if a == 0:
+		//				ret b
+		//			if b == 0:
+		//				ret a
+		//			while a != b:
+		//				if a > b:
+		//					ret a - b
+		//				else:
+		//					ret b - a
+		//			ret a
+		//	
+		//	get_line(pt1, pt2):
+		//		n = pt1.y - pt2.y
+		//		d = pt1.x - pt2.x
+		//		g = gcd(n, d)
+		//		n /= g
+		//		d /= g
+		//		ret n << 96 | d << 64 | pt1.x << 32 | pt1.y
+		//	best_line(points):
+		//		for i = 0 until points.count():
+		//			for j = i + 1 until points.count():
+		//				line = get_line(points.get(i), points.get(j))
+		//				key = pack(line)
+		//				hash_map[key] += 1
+		//		max_line = { }
+		//		max_rank = 0
+		//		for each pair in hash_Map:
+		//			if max_rank < pair.first:
+		//				max_rank = pair.first
+		//				max_line = unpack(pair.second)
+		//		ret max_line
+	}
+}
+
 int main()
 {
 	problem1<int>();
@@ -944,5 +997,6 @@ int main()
 	Problem11::problem11();
 	Problem12::solutions();
 	Problem13::solutions();
+	Probelm14::solutions();
 	return 0;
 }

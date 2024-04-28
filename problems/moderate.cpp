@@ -909,6 +909,24 @@ namespace Problem12
 	}
 }
 
+// Bisect Squares: Given two squares on a two-dimensional plane, find a line that would cut these two
+// squares in half. Assume that the top and the bottom sides of the square run parallel to the x-axis.
+namespace Problem13
+{
+	void solutions()
+	{
+		// Solution no 1:
+		//
+		// 	get_bisect_line(sqr1, sqr2):
+		//		pt1 = sqr1.center
+		//		pt2 = sqr2.center
+		//		m = (pt1.y - pt2.y) /(pt1.x - pt2.x)
+		//		(y - pt1.y) / (x - pt1.x) = m
+		//		y = m * (x - pt1.x) + pt1.y
+		//		y = ((pt1.y - pt2.y) / (pt1.x - pt2.x)) * (x - pt1.x) + pt1.y
+	}
+}
+
 int main()
 {
 	problem1<int>();
@@ -925,5 +943,6 @@ int main()
 	problem10();
 	Problem11::problem11();
 	Problem12::solutions();
+	Problem13::solutions();
 	return 0;
 }

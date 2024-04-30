@@ -984,7 +984,7 @@ namespace Problem15
 {
 	void solutions()
 	{
-		// Solution no1 (Brute Force):
+		// Solution no1 (Brute Force, won't work for some cases):
 		//	rgby(guess, solution):
 		//		visited[4] = { } // hash table of size 4
 		//		for i = 0 until solution.size():
@@ -995,6 +995,20 @@ namespace Problem15
 		//					else:
 		//						pseudo_hit += 1
 		//					visited[guess[j]] = true
+		//		ret { hit, pseudo_hit }
+		//
+		// Solution no 2:
+		//	rgby(guess, solution):
+		//		solution_map[4] = { }
+		//		guess_map[4] = { }
+		//		for i = 0 until solution.size():
+		//			if guess[i] == solution[i]:
+		//				hit += 1
+		//			else:
+		//				solution_map[index(solution[i])] += 1
+		//				guess_map[index(guess[i])] += 1
+		//		for i = 0 until solution_map.size():
+		//			pseudo_hit += min(solution_map[i], guess_map[i])
 		//		ret { hit, pseudo_hit }
 	}
 }

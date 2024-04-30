@@ -980,6 +980,25 @@ namespace Problem14
 	}
 }
 
+namespace Problem15
+{
+	void solutions()
+	{
+		// Solution no1 (Brute Force):
+		//	rgby(guess, solution):
+		//		visited[4] = { } // hash table of size 4
+		//		for i = 0 until solution.size():
+		//			for j = 0 until guess.size():
+		//				if !visited[guess[j]] && solution[i] == guess[j]:
+		//					if i == j:
+		//						hit += 1
+		//					else:
+		//						pseudo_hit += 1
+		//					visited[guess[j]] = true
+		//		ret { hit, pseudo_hit }
+	}
+}
+
 int main()
 {
 	problem1<int>();

@@ -468,7 +468,7 @@ void problem8()
 	const char* arr1[]  = { "", "Thousands", "Millions", "Billions", "Trillions" };
 
 	char str[16];
-	sprintf(str, PRIu64, n);
+	sprintf(str, "%" PRIu64, n);
 	int len = strlen(str);
 	for(int i = len - 1; i >= 0; --i)
 	{
@@ -1015,6 +1015,48 @@ namespace Problem15
 
 namespace Problem16
 {
+	#define SIZEOF_ARRAY(array) (sizeof(array) / sizeof(array[0]))
+	typedef std::pair<std::size_t, std::size_t> interval_t;
+	template<typename T, std::size_t N>
+	interval_t get_right_longest_subsequence(T (&arr)[N])
+	{
+		std::size_t end = SIZEOF_ARRAY(arr) - 1;
+		std::size_t start = end;
+		while((start > 0) && (arr[start - 1] < arr[start]))
+			start -= 1;
+		return { start, end };
+	}
+	template<typename T, std::size_t N>
+	interval_t get_left_longest_subsequence(T (&arr)[N])
+	{
+		std::size_t start = 0;
+		std::size_t end = 0;
+		while((end < (SIZEOF_ARRAY(arr) - 1)) && (arr[end] < arr[end + 1]))
+			end += 1;
+		return { start, end };
+	}
+	template<typename T, std::size_t N>
+	interval_t get_min(T (&arr)[N])
+	{
+		auto right_seq = get_right_longest_subsequence(arr);
+		if(right_seq.first == 0)
+			return { 0, SIZEOF_ARRAY(arr) - 1 };
+		auto left_seq = get_left_longest_subsequence(arr);
+		std::size_t min_index = right_seq.first;
+		std::size_t max_index = left_seq.second;
+		for(std::size_t i = left_seq.second + 1; i < right_seq.first; i++)
+		{
+			if(arr[min_index] > arr[i])
+				min_index = i;
+			if(arr[max_index] < arr[i])
+				max_index = i;
+		}
+		while((left_seq.second > 0) && (arr[left_seq.second] > arr[min_index]))
+			left_seq.second -= 1;
+		while((right_seq.first < (SIZEOF_ARRAY(arr) - 1)) && (arr[right_seq.first] < arr[max_index]))
+			right_seq.first += 1;
+		return { left_seq.second + 1, right_seq.first - 1 };
+	}
 	void solutions()
 	{
 		// Solution no 1:
@@ -1024,8 +1066,8 @@ namespace Problem16
 		//		if right_pair.start == 0:
 		//			ret { 0, arr.size() - 1 }
 		//		left_pair = get_left_longest_subsequence(arr)
-		//		min_index = left_pair.end + 1
-		//		max_index = right_pair.start - 1
+		//		min_index = right_pair.start
+		//		max_index = left_pair.second
 		//		for i = left_pair.end + 1; i < right_pair.start; i++:
 		//			if arr[min_index] > arr[i]:
 		//				min_index = i
@@ -1047,9 +1089,13 @@ namespace Problem16
 		// get_left_longest_subsequence(arr):
 		//		start = 0
 		//		end = 0
-		//		while (end < arr.size()) && (arr[start + 1] > arr[start]):
+		//		while (end < (arr.size() - 1)) && (arr[end + 1] > arr[end]):
 		//			end += 1
-		//		ret { start, end }	
+		//		ret { start, end }
+		int arr[13] = { 1, 2, 4, 7, 10, 11, 8, 12, 5, 6, 16, 18, 19 };
+		interval_t interv = get_min(arr);
+		std::cout << "Problem no 16: " << std::endl;
+		std::cout << "\t min max = {" << interv.first << ", " << interv.second << "}" << std::endl;
 	}
 }
 

@@ -1013,6 +1013,46 @@ namespace Problem15
 	}
 }
 
+namespace Problem16
+{
+	void solutions()
+	{
+		// Solution no 1:
+		//
+		// get_min(arr):
+		//		right_pair = get_right_longest_subsequence(arr)
+		//		if right_pair.start == 0:
+		//			ret { 0, arr.size() - 1 }
+		//		left_pair = get_left_longest_subsequence(arr)
+		//		min_index = left_pair.end + 1
+		//		max_index = right_pair.start - 1
+		//		for i = left_pair.end + 1; i < right_pair.start; i++:
+		//			if arr[min_index] > arr[i]:
+		//				min_index = i
+		//			if arr[max_index] < arr[i]:
+		//				max_index = i
+		//		while((left_pair.end > 0) && (arr[left_pair.end] > arr[min_index]))
+		//			left_pair.end -= 1
+		//		while((right_pair.start < (arr.size() - 1)) && (arr[right_pair.start] < arr[max_index]))
+		//			right_pair.start += 1
+		//		ret { left_pair.end + 1, right_pair.start - 1 }
+		//
+		// get_right_longest_subsequence(arr):
+		//		end = arr.size() - 1
+		//		start = end
+		//		while (start > 0) && (arr[start - 1] < arr[start]):
+		//			start -= 1
+		//		ret { start, end }
+		//
+		// get_left_longest_subsequence(arr):
+		//		start = 0
+		//		end = 0
+		//		while (end < arr.size()) && (arr[start + 1] > arr[start]):
+		//			end += 1
+		//		ret { start, end }	
+	}
+}
+
 int main()
 {
 	problem1<int>();
@@ -1030,6 +1070,8 @@ int main()
 	Problem11::problem11();
 	Problem12::solutions();
 	Problem13::solutions();
-	Probelm14::solutions();
+	Problem14::solutions();
+	Problem15::solutions();
+	Problem16::solutions();
 	return 0;
 }

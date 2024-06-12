@@ -1106,9 +1106,41 @@ namespace Problem16
 
 namespace Problem18
 {
+	bool Match(const char* pattern, const char* value)
+	{
+		// pseudo code
+		//
+		// match(pattern, value):
+		//		
+		//		for(int i = 0, j = 0; i < pattern.length();)
+		//			if j >= value.length()
+		//				ret false
+		//			r = map.get(pattern[i])
+		//			if r == null:
+		//				map.add(pattern[i], { j, j + 1 })
+		//			else
+		//				while r not equals to { value[r.end], value[r.end + r.length()] }:
+		//					map.set(pattern[i], { r.start, r.start + 1 })
+		//					r = map.get(pattern[i])
+		//					if (r.end + r.length()) >= value.length():
+		//						ret false
+		//				j = r.end + r.length()
+		//			i += 1
+		//			ret true
+		return false;
+	}
+
 	void solutions()
 	{
+		const char* pattern = "aabab";
+		const char* pattern2 = "abcabcfgabcfg";
+		const char* value = "catcagtocagto";
 
+		bool isMatched = Match(pattern, value);
+		if(isMatched)
+			std::cout << "Pattern: " << pattern << ", matches: " << value << std::endl;
+		else
+			std::cout << "Pattern: " << pattern << ", doesn't match: " << value << std::endl;
 	}
 }
 

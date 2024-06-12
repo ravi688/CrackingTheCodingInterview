@@ -1099,6 +1099,19 @@ namespace Problem16
 	}
 }
 
+// 16.18 Pattern Matching: You are given two strings, pattern and value. The pattern string consists of just
+// the letters a and b, describing a pattern within a string. For exampling, the string catcatgocatgo matches
+// the pattern aabab (where cat is a and go is b). It also matches patterns like a, ab, and b.
+// Write a method to determine if value matches pattern.
+
+namespace Problem18
+{
+	void solutions()
+	{
+
+	}
+}
+
 int main()
 {
 	problem1<int>();
@@ -1119,5 +1132,6 @@ int main()
 	Problem14::solutions();
 	Problem15::solutions();
 	Problem16::solutions();
+	Problem18::solutions();
 	return 0;
 }

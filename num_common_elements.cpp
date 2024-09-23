@@ -1,0 +1,50 @@
+#include <iostream> // for std::cout
+#include <vector> // for std::vector
+#include <set> // for std::set
+#include <concepts> // for std::convertible_to<> concept
+
+template<typename T>
+concept List = requires(const T& list)
+{
+	{ list.size() } -> std::convertible_to<std::size_t>;
+	list.begin();
+	list.end();
+	typename T::value_type;
+};
+
+template<List T>
+auto calculate_num_common_elements(const T& list1, const T& list2) noexcept
+{
+	std::set<typename T::value_type> checkReg;
+	for(auto value : list1)
+		checkReg.insert(value);
+	decltype(list1.size()) count = 0;
+	for(auto value : list2)
+		if(checkReg.contains(value))
+			++count;
+	return count;
+}
+
+template<List T>
+static std::ostream& operator<<(std::ostream& stream, const T& list) noexcept
+{
+	for(decltype(list.size()) i = 0; auto value : list)
+	{
+		stream << value;
+		++i;
+		if(i != list.size())
+			stream << ", ";
+	}
+	return stream;
+}
+
+int main()
+{
+	std::vector<int> list1 = { 5, 2, 8, 9, 4 };
+	std::vector<int> list2 = { 3, 2, 9, 5 };
+	std::cout << "List1: " << list1 << std::endl;
+	std::cout << "List2: " << list2 << std::endl;
+	auto count = calculate_num_common_elements(list1, list2);
+	std::cout << "Result: " << count << std::endl;
+	return 0;
+};

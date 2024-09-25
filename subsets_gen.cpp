@@ -45,6 +45,7 @@ std::vector<std::vector<int>> get_subsets(const std::vector<int>& set) noexcept
 	std::vector<std::vector<int>> subsets;
 	subsets.reserve(1 << set.size());
 	std::vector<int> buf;
+	buf.reserve(set.size());
 	// NOTE: here std::function<void> results in in-complete type definition, so we are using std::function<void(void)>
 	std::function<void(void)> fn = [&buf, &subsets]()
 	{

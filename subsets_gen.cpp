@@ -96,6 +96,94 @@ struct subset_traverser_2
 	}
 };
 
+
+// NOTE: it just puts indices of the elements, not their values
+// Time Complexity: T(n) = n * 2^n
+template<ReadOnlyVector T> requires (std::integral<typename T::value_type>)
+void traverse_subsets3(const T& set, std::vector<typename T::value_type>& buf, std::function<void(void)>& callback) noexcept
+{
+	auto n = set.size();
+	auto bitCount = static_cast<std::uint64_t>(1) << n;
+	for(decltype(bitCount) i = 0; i < bitCount; ++i)
+	{
+		buf.clear();
+		for(typename T::value_type j = 0; j < n; ++j)
+			if(i & (static_cast<std::uint64_t>(1) << j))
+				buf.push_back(j);
+		callback();
+	}
+}
+
+struct subset_traverser_3
+{
+	template<ReadOnlyVector T>
+	void operator ()(const T& set, std::vector<typename T::value_type>& buf, std::function<void(void)>& callback) noexcept
+	{
+		std::chrono::time_point<std::chrono::steady_clock> start = std::chrono::steady_clock::now();
+		traverse_subsets3(set, buf, callback);
+		auto end = std::chrono::steady_clock::now();
+		auto timeElapsed = std::chrono::duration_cast<std::chrono::duration<double, std::milli>>(end - start).count();
+		std::cout << "ST3, Time Elapsed: " << timeElapsed << " ms" << std::endl;
+	}
+};
+
+template<ReadOnlyVector T> requires (std::integral<typename T::value_type>)
+void traverse_subsets4(const T& set, std::vector<typename T::value_type>& buf, std::function<void(void)>& callback) noexcept
+{
+	auto n = set.size();
+	auto bitCount = static_cast<std::uint64_t>(1) << n;
+	for(decltype(bitCount) i = 0; i < bitCount; ++i)
+	{
+		buf.clear();
+		for(int j = 0; j < n; ++j)
+			if(i & (static_cast<std::uint64_t>(1) << j))
+				buf.push_back(j);
+		callback();
+	}
+}
+
+struct subset_traverser_4
+{
+	template<ReadOnlyVector T>
+	void operator ()(const T& set, std::vector<typename T::value_type>& buf, std::function<void(void)>& callback) noexcept
+	{
+		std::chrono::time_point<std::chrono::steady_clock> start = std::chrono::steady_clock::now();
+		traverse_subsets4(set, buf, callback);
+		auto end = std::chrono::steady_clock::now();
+		auto timeElapsed = std::chrono::duration_cast<std::chrono::duration<double, std::milli>>(end - start).count();
+		std::cout << "ST4, Time Elapsed: " << timeElapsed << " ms" << std::endl;
+	}
+};
+
+
+template<ReadOnlyVector T> requires (std::integral<typename T::value_type>)
+void traverse_subsets5(const T& set, std::vector<typename T::value_type>& buf, std::function<void(void)>& callback) noexcept
+{
+	auto n = set.size();
+	auto bitCount = static_cast<std::uint64_t>(1) << n;
+	for(decltype(bitCount) i = 0; i < bitCount; ++i)
+	{
+		buf.clear();
+		for(unsigned int j = 0; j < n; ++j)
+			if(i & (static_cast<std::uint64_t>(1) << j))
+				buf.push_back(j);
+		callback();
+	}
+}
+
+struct subset_traverser_5
+{
+	template<ReadOnlyVector T>
+	void operator ()(const T& set, std::vector<typename T::value_type>& buf, std::function<void(void)>& callback) noexcept
+	{
+		std::chrono::time_point<std::chrono::steady_clock> start = std::chrono::steady_clock::now();
+		traverse_subsets5(set, buf, callback);
+		auto end = std::chrono::steady_clock::now();
+		auto timeElapsed = std::chrono::duration_cast<std::chrono::duration<double, std::milli>>(end - start).count();
+		std::cout << "ST5, Time Elapsed: " << timeElapsed << " ms" << std::endl;
+	}
+};
+
 template<typename T>
 typename std::add_lvalue_reference<T>::type decllval()
 {
@@ -110,7 +198,7 @@ concept SubsetTraverser = ReadOnlyVector<T> && requires(S s, T t)
 };
 
 template<ReadOnlyVector T, SubsetTraverser<T> S = subset_traverser_1>
-std::vector<std::vector<int>> get_subsets(const T& set) noexcept
+std::vector<std::vector<typename T::value_type>> get_subsets(const T& set) noexcept
 {
 	std::vector<std::vector<typename T::value_type>> subsets;
 	subsets.reserve(1 << set.size());
@@ -144,13 +232,45 @@ std::vector<std::vector<int>> get_subsets_int(const std::vector<int>& set) noexc
 	return subsets;
 }
 
+// Output on Core i5 8th gen
+
+// With intType = int;
+// Given set: { 1, 2, 3, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19 }
+// ST1, Time Elapsed: 3571.2 ms
+// ST2, Time Elapsed: 6276.73 ms
+// ST3, Time Elapsed: 9437.55 ms <--- slower than ST4 as it contains unsigned to signed conversion
+// ST4, Time Elapsed: 5915.98 ms <--- faster than ST3!
+// ST5, Time Elapsed: 9484.11 ms <--- same as ST3 as it also contains unsigned to signed conversion
+//
+// With intType = unsigned int;
+// Given set: { 1, 2, 3, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19 }
+// ST1, Time Elapsed: 3553.49 ms
+// ST2, Time Elapsed: 6367.11 ms
+// ST3, Time Elapsed: 9557.46 ms <--- slower than ST5, though it doesn't contain any sign conversion but it does bit-width conversion
+// ST4, Time Elapsed: 9564.46 ms <--- slower than ST5 as there is signed to unsigned conversion
+// ST5, Time Elapsed: 6111.33 ms <--- faster than ST3 as there is no unsigned to signed conversion
+//
+// If we use 'unsigned int' in the inner loop in ST3, with intType = unsigned int, ST3 becomes as fast as ST5, because there would no bit-width conversion then I guess.
+
+
+
+// Conclusion:
+// I think convertion from unsigned to signed (or opposite), and bit-width conversion might be additional overheads
+// And they can add significant difference in performance.
+
+
 int main()
 {
-	std::vector<int> set = { 1, 2, 3 };
+	using intType = unsigned int;
+	std::vector<intType> set = { 1, 2, 3 };
 	for(int i = 0; i < 20; i++)
 		set.push_back(i);
 	std::cout << "Given set: " << set << std::endl;
-	std::vector<std::vector<int>> subsets = get_subsets<std::vector<int>, subset_traverser_1>(set);
+	auto result1 = get_subsets<std::vector<intType>, subset_traverser_1>(set);
+	auto result2 = get_subsets<std::vector<intType>, subset_traverser_2>(set);
+	auto result3 = get_subsets<std::vector<intType>, subset_traverser_3>(set);
+	auto result4 = get_subsets<std::vector<intType>, subset_traverser_4>(set);
+	auto result5 = get_subsets<std::vector<intType>, subset_traverser_5>(set);
 //	std::cout << "Subsets: " << std::endl;
 //	for(auto& subset : subsets)
 //		std::cout << subset << std::endl;

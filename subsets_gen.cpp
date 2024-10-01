@@ -4,6 +4,7 @@
 #include <functional> // for std::function type erasure
 #include <utility> // for std::declval
 #include <cstdint> // for std::uint64_t
+#include <chrono> // for std::chrono::time_point<std::chrono::steady_clock> std::chrono::duration, std::chrono::duration_cast etc.
 
 template<typename T>
 concept ReadOnlyContainer = requires(const T& container)
@@ -58,7 +59,11 @@ struct subset_traverser_1
 	template<ReadOnlyVector T>
 	void operator()(const T& set, std::vector<typename T::value_type>& buf, std::function<void(void)>& callback) noexcept
 	{
+		std::chrono::time_point<std::chrono::steady_clock> start = std::chrono::steady_clock::now();
 		traverse_subsets(set, 0, buf, callback);
+		auto end = std::chrono::steady_clock::now();
+		auto timeElapsed = std::chrono::duration_cast<std::chrono::duration<double, std::milli>>(end - start).count();
+		std::cout << "ST1, Time Elapsed: " << timeElapsed << " ms" << std::endl;
 	}
 };
 
@@ -83,7 +88,11 @@ struct subset_traverser_2
 	template<ReadOnlyVector T>
 	void operator ()(const T& set, std::vector<typename T::value_type>& buf, std::function<void(void)>& callback) noexcept
 	{
+		std::chrono::time_point<std::chrono::steady_clock> start = std::chrono::steady_clock::now();
 		traverse_subsets2(set, buf, callback);
+		auto end = std::chrono::steady_clock::now();
+		auto timeElapsed = std::chrono::duration_cast<std::chrono::duration<double, std::milli>>(end - start).count();
+		std::cout << "ST2, Time Elapsed: " << timeElapsed << " ms" << std::endl;
 	}
 };
 
@@ -138,12 +147,12 @@ std::vector<std::vector<int>> get_subsets_int(const std::vector<int>& set) noexc
 int main()
 {
 	std::vector<int> set = { 1, 2, 3 };
-	for(int i = 0; i < 10; i++)
+	for(int i = 0; i < 20; i++)
 		set.push_back(i);
 	std::cout << "Given set: " << set << std::endl;
 	std::vector<std::vector<int>> subsets = get_subsets<std::vector<int>, subset_traverser_1>(set);
-	std::cout << "Subsets: " << std::endl;
-	for(auto& subset : subsets)
-		std::cout << subset << std::endl;
+//	std::cout << "Subsets: " << std::endl;
+//	for(auto& subset : subsets)
+//		std::cout << subset << std::endl;
 	return 0;
 }

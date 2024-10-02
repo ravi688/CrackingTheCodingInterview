@@ -24,7 +24,7 @@ concept BoolVector = requires(T& v)
 };
 
 template<ReadOnlyVector T, BoolVector B>
-void traverse_permutations(const T& v, std::vector<typename T::value_type>& p, B& choosen, std::function<void(void)>& callback) noexcept
+void traverse_permutations_1(const T& v, std::vector<typename T::value_type>& p, B& choosen, std::function<void(void)>& callback) noexcept
 {
 	if(p.size() == v.size())
 	{
@@ -40,24 +40,82 @@ void traverse_permutations(const T& v, std::vector<typename T::value_type>& p, B
 		}
 		p.push_back(v[i]);
 		choosen[i] = true;
-		traverse_permutations(v, p, choosen, callback);
+		traverse_permutations_1(v, p, choosen, callback);
 		p.pop_back();
 		choosen[i++] = false;
 	}
 }
 
+// Iterative method
+
+template<typename T>
+T getNFactorial(T n) noexcept
+{
+	T result = 1;
+	while(n > 1)
+	{
+		result *= n;
+		--n;
+	}
+	return result;
+}
+
 template<ReadOnlyVector T>
+void traverse_permutations_2(const T& v, std::vector<typename T::value_type>& p, std::function<void(void)>& callback) noexcept
+{
+	using size_type = typename T::size_type;
+	size_type n = v.size();
+	for(size_type i = 0; i < n; ++i)
+		p.push_back(v[i]);
+	size_type numPermutes = getNFactorial(n);
+	for(size_type i = 0; i < numPermutes; ++i)
+	{
+		callback();
+	}
+}
+
+struct permutation_traverser_1
+{
+	template<ReadOnlyVector T>
+	void operator() (const T& v, std::vector<typename T::value_type>& p, std::function<void(void)>& callback) noexcept
+	{
+		std::vector<bool> b(v.size(), false);
+		traverse_permutations_1(v, p, b, callback);
+	}
+};
+
+struct permutation_traverser_2
+{
+	template<ReadOnlyVector T>
+	void operator() (const T& v, std::vector<typename T::value_type>& p, std::function<void(void)>& callback) noexcept
+	{
+		traverse_permutations_2(v, p, callback);
+	}
+};
+
+template<typename T>
+typename std::add_lvalue_reference<T>::type decllval() noexcept
+{
+	return *reinterpret_cast<T*>(nullptr);
+}
+
+template<typename T, typename V>
+concept PermutationTraverser = ReadOnlyVector<V> && std::is_default_constructible<T>::value && requires(T ps)
+{
+	ps.operator()(decllval<V>(), decllval<std::vector<typename V::value_type>>(), decllval<std::function<void(void)>>());
+};
+
+template<ReadOnlyVector T, PermutationTraverser<T> PS = permutation_traverser_1>
 std::vector<std::vector<typename T::value_type>> get_permutations(const T& v) noexcept
 {
 	std::vector<std::vector<typename T::value_type>> permutations;
 	std::vector<typename T::value_type> p;
 	p.reserve(v.size());
-	std::vector<bool> b(v.size(), false);
 	std::function<void(void)> fn =  [&p, &permutations]()
 	{
 		permutations.push_back(std::vector<typename T::value_type> { p });
 	};
-	traverse_permutations(v, p, b, fn);
+	PS { } (v, p, fn);
 	return permutations;
 }
 
@@ -81,7 +139,12 @@ int main(int argc, const char* argv[])
 {
 	std::vector<int> set = { 2, 3, 4 };
 	std::cout << "Given set: " << set << std::endl;
+	std::cout << "Recursive Method: " << std::endl;
 	std::vector<std::vector<int>> permutations = get_permutations(set);
+	for(auto& p : permutations)
+		std::cout << p << std::endl;
+	std::cout << "Iterative Method: " << std::endl;
+	permutations = get_permutations<decltype(set), permutation_traverser_2>(set);
 	for(auto& p : permutations)
 		std::cout << p << std::endl;
 	return 0;

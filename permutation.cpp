@@ -70,6 +70,7 @@ void traverse_permutations_2(const T& v, std::vector<typename T::value_type>& p,
 	size_type numPermutes = getNFactorial(n);
 	for(size_type i = 0; i < numPermutes; ++i)
 	{
+		std::next_permutation(p.begin(), p.end());
 		callback();
 	}
 }

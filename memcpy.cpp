@@ -19,14 +19,16 @@ struct matching_integer
 
 typedef unsigned char Byte;
 typedef typename matching_integer<sizeof(void*)>::type Word;
-static constexpr std::size_t BUFFER_SIZE = 8192; // 8 KB
+static constexpr std::size_t PAGE_SIZE = 4096; // 4 KB
+static constexpr std::size_t BUFFER_SIZE = PAGE_SIZE * 2; // 8 KB
 
 
 int main()
 {
 	std::cout << "Experiment setup: \n"
 		<< "\t Number of bytes to copy: " << BUFFER_SIZE << "\n"
-		<< "\t Machine Word length: " << sizeof(Word) << " Bytes" << std::endl;
+		<< "\t Machine Word length: " << sizeof(Word) << " Bytes\n"
+		<< "\t Page Size: " << PAGE_SIZE << " Bytes" << std::endl;
 
 	Byte* buffer1 = (Byte*)malloc(BUFFER_SIZE);
 	for(std::size_t i = 0; i < BUFFER_SIZE; ++i)

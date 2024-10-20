@@ -1,16 +1,33 @@
+// This experiment suggests us to use memcpy whereever possible, as it is the fastest one.
+
+
 #include <iostream>
 #include <cstdlib> // for malloc
 #include <limits> // for std::numerc_limits<>
 #include <chrono> // for time measurement
 #include <cstring> // memcpy
 
+template<std::size_t numBytes>
+struct matching_integer
+{
+	typedef typename std::conditional<numBytes == sizeof(char), char,
+		typename std::conditional<numBytes == sizeof(short int), short int,
+		typename std::conditional<numBytes == sizeof(int), int,
+		typename std::conditional<numBytes == sizeof(long int), long int,
+		typename std::conditional<numBytes == sizeof(long long int), long long int, void>::type>::type>::type>::type>::type type;
+};
+
 typedef unsigned char Byte;
-typedef long int Word;
+typedef typename matching_integer<sizeof(void*)>::type Word;
 static constexpr std::size_t BUFFER_SIZE = 8192; // 8 MB
 
 
 int main()
 {
+	std::cout << "Experiment setup: \n"
+		<< "\t Number of bytes to copy: " << BUFFER_SIZE << "\n"
+		<< "\t Machine Word length: " << sizeof(Word) << " Bytes" << std::endl;
+
 	Byte* buffer1 = (Byte*)malloc(BUFFER_SIZE);
 	for(std::size_t i = 0; i < BUFFER_SIZE; ++i)
 		buffer1[i] = i % std::numeric_limits<Byte>::max();

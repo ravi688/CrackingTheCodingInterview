@@ -1,5 +1,5 @@
 // This experiment suggests us to use memcpy whereever possible, as it is the fastest one.
-
+// Do note that 32-bit compilers can report 32-bit word size (4 bytes) on a 64-bit machine!
 
 #include <iostream>
 #include <cstdlib> // for malloc

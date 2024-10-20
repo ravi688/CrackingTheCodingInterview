@@ -19,7 +19,7 @@ struct matching_integer
 
 typedef unsigned char Byte;
 typedef typename matching_integer<sizeof(void*)>::type Word;
-static constexpr std::size_t BUFFER_SIZE = 8192; // 8 MB
+static constexpr std::size_t BUFFER_SIZE = 8192; // 8 KB
 
 
 int main()

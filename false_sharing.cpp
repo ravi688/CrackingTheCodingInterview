@@ -1,3 +1,10 @@
+// Conclusion:
+//	Data aligned to the cache line boundry avoids false sharing situation
+//	Also, higher generation CPUs doesn't necessarly mean that they give more performance.
+//	For example, I tested this code on intel Core i3 8350U, it took around 2 milliseconds for test1(),
+//			and on Core i5 12400, it took around 2 milliseconds for test1() - same (infact sometimes it took longer).
+
+
 #include <iostream>
 #include <thread>
 #include <new>

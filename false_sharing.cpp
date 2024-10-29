@@ -30,18 +30,19 @@ struct Data2
 
 static Data2 gData2;
 
+template<std::memory_order memory_order>
 static void test1() noexcept
 {
 	auto start = std::chrono::steady_clock::now();
 	std::thread thread1([](Data1& data1) noexcept
 	{
 		for(std::size_t i = 0; i < ITERATION_COUNT; ++i)
-			data1.value1.fetch_add(1);
+			data1.value1.fetch_add(1, memory_order);
 	}, std::ref(gData1));
 	std::thread thread2([](Data1& data1) noexcept
 	{
 		for(std::size_t i = 0; i < ITERATION_COUNT; ++i)
-			data1.value2.fetch_add(1);
+			data1.value2.fetch_add(1, memory_order);
 	}, std::ref(gData1));
 	thread1.join();
 	thread2.join();
@@ -50,18 +51,19 @@ static void test1() noexcept
 	std::cout << "test1: " << elapsedTime << std::endl;
 }
 
+template<std::memory_order memory_order>
 static void test2() noexcept
 {
 	auto start = std::chrono::steady_clock::now();
 	std::thread thread1([](Data2& data2) noexcept
 	{
 		for(std::size_t i = 0; i < ITERATION_COUNT; ++i)
-			data2.value1.fetch_add(1);
+			data2.value1.fetch_add(1, memory_order);
 	}, std::ref(gData2));
 	std::thread thread2([](Data2& data2) noexcept
 	{
 		for(std::size_t i = 0; i < ITERATION_COUNT; ++i)
-			data2.value2.fetch_add(1);
+			data2.value2.fetch_add(1, memory_order);
 	}, std::ref(gData2));
 	thread1.join();
 	thread2.join();
@@ -82,11 +84,20 @@ int main()
 	gData2.value1.store(0);
 	gData2.value2.store(0);
 
+	std::cout << "memory order: sequentially consistent" << std::endl;
 	for(std::size_t i = 0; i < TEST_RUN_COUNT; ++i)
 	{
 		std::cout << "Run: " << i << std::endl;
-		test1();
-		test2();
+		test1<std::memory_order_seq_cst>();
+		test2<std::memory_order_seq_cst>();
+	}
+
+	std::cout << "memory order: relaxed" << std::endl;
+	for(std::size_t i = 0; i < TEST_RUN_COUNT; ++i)
+	{
+		std::cout << "Run: " << i << std::endl;
+		test1<std::memory_order_relaxed>();
+		test2<std::memory_order_relaxed>();
 	}
 	return 0;
 }

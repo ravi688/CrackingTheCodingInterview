@@ -18,7 +18,7 @@ struct Data1
 {
 	std::atomic<std::uint32_t> value1;
 	std::atomic<std::uint32_t> value2;
-};
+} __attribute__((aligned(std::hardware_destructive_interference_size)));
 
 static Data1 gData1;
 
@@ -26,7 +26,7 @@ struct Data2
 {
 	__attribute__((aligned(std::hardware_destructive_interference_size))) std::atomic<std::uint32_t> value1;
 	__attribute__((aligned(std::hardware_destructive_interference_size))) std::atomic<std::uint32_t> value2;
-} __attribute__((aligned(64)));
+} __attribute__((aligned(std::hardware_destructive_interference_size)));
 
 static Data2 gData2;
 

@@ -57,6 +57,6 @@ int main()
 		auto end = std::chrono::steady_clock::now();
 		float elapsed = std::chrono::duration_cast<std::chrono::duration<float, std::milli>>(end - start).count();
 		totalBytes += CHUNK_SIZE;
-		std::cout << "[" << std::setw(2) << i << "]" << "TotalBytes: " << std::setw(6) << totalBytes << ", elapsed: " << std::fixed << elapsed << std::endl;
+		std::cout << "[" << std::setw(2) << i << "]" << "TotalBytes: " << std::setw(6) << totalBytes << ", addr: " << std::bit_cast<std::uintptr_t>(bytes) << ", elapsed: " << std::fixed << elapsed << std::endl;
 	}
 }

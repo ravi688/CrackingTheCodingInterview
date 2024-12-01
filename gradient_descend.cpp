@@ -1,5 +1,4 @@
 #include <iostream>
-#include <cmath> // for std::signbit
 
 typedef float (*UnivariateFunction)(float);
 static constexpr float dx = 0.00003f;

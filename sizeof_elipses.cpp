@@ -22,6 +22,8 @@ struct sizeof_all<Arg>
 	static constexpr auto value = sizeof(Arg);
 };
 
+// NOTE: we can't implement sizeof_all<...> uses function templates; that's because C++ standard doesn't support partial specialization
+// for function templates; but it does supports partial specialization for class/struct types.
 
 int main()
 {

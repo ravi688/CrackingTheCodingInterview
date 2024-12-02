@@ -80,12 +80,14 @@ static bool tryGrabForks(std::size_t id) noexcept
 	bool isFork1Acquired = gForks[fork1].try_acquire();
 	bool isFork2Acquired = gForks[fork2].try_acquire();
 
+	// If both the forks are acquired then we return true, i.e. the philosopher is ready to eat
 	if(isFork1Acquired && isFork2Acquired)
 	{
 		std::lock_guard lk(gStdOutMutex);
 		std::cout << "[" << id << "] Grabbed forks" << std::endl;
 		return true;
 	}
+	// If either of both not acquired then we turn false (by default) and release the acquired one
 	else
 	{
 		if(isFork1Acquired)

@@ -29,7 +29,7 @@ int main()
 {
 	auto numTypes = getNumTypes<int, float, double>();
 	std::cout << "sizeof...(int, float, double): " << numTypes << std::endl;
-	auto size = sizeof_all<int, float, double>();
+	auto size = sizeof_all<int, float, double>::value;
 	std::cout << "total size of (int, float, double): " << size << std::endl;
 	return 0;
 }

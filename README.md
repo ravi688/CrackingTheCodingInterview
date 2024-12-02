@@ -5,6 +5,7 @@ Coding Practice for my Job interviews and personal learnings
  - mmap()
  - page allocation (multiple subsequent calls to malloc())
  - mutexes
+ - processes (fork())
 ### Hardware concepts
  - False Sharing
  - Cache hits/misses

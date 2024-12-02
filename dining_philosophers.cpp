@@ -45,7 +45,7 @@ static void eat(std::size_t id) noexcept
 	}
 	int randValue = tsRand();
 	std::this_thread::sleep_for(std::chrono::milliseconds(randValue % 1000));
-	gPhilosophersEat[id] == std::min(gPhilosophersMaxEat[id], gPhilosophersEat[id] + gEnergyIncreaseRate);
+	gPhilosophersEat[id] = std::min(gPhilosophersMaxEat[id], gPhilosophersEat[id] + gEnergyIncreaseRate);
 }
 
 static inline bool isFull(std::size_t id) noexcept

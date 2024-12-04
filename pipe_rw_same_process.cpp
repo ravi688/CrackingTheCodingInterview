@@ -5,8 +5,10 @@
 
 #include <iostream> // for std::cout
 #include <vector> // for std::vector<>
-#include <stdlib.h> // for EXIT_FAILURE macro
+#include <stdlib.h> // for EXIT_FAILURE macro and atoi()
 #include <unistd.h> // for pipe()
+#include <fcntl.h> // for open(), close() etc.
+#include <sys/stat.h>
 
 // Tested on Ubuntu 24.04
 // Pipes have limited buffer; so this size will cause write() function to block until a read() is execute over the same buffer
@@ -20,8 +22,53 @@ static constexpr std::size_t SIZE = 4096 * 1024;
 // So if the number of elements exceed a certain limit the compiler complains about that when constexpr is applied.
 static const std::vector<int> gData(SIZE);
 
+// NOTE: the file size of "/proc/sys/fs/pipe-max-size" turns out to be zero. Maybe it is a ghost file created by the OS and
+// it is the OS which servers read() and write() request on the fly with no data on the disk's i-nodes.
+static std::size_t getMaxPipeBufferSize() noexcept
+{
+	const char* filePath = "/proc/sys/fs/pipe-max-size";
+	int fd = open(filePath, O_RDONLY, 0);
+	if(fd == -1)
+	{
+		perror("Failed to open pipe-max-size file");
+		exit(EXIT_FAILURE);
+	}
+	struct stat buf;
+	if(fstat(fd, &buf) == -1)
+	{
+		perror("Failed to get file state");
+		exit(EXIT_FAILURE);
+	}
+	std::size_t size = buf.st_size;
+	std::cout << "file size: " << size << std::endl;
+	char rdbuf[size + 1];
+	FILE* stream = fdopen(fd, "r");
+	if(!stream)
+	{
+		perror("Failed to open file stream");
+		exit(EXIT_FAILURE);
+	}
+	if(fread(rdbuf, 1, size, stream) != size)
+	{
+		perror("Failed to read all the data");
+		exit(EXIT_FAILURE);
+	}
+	rdbuf[size] = 0;
+	std::cout << "rdbuf: " << rdbuf << std::endl;
+	size = atoi(rdbuf);
+	if(close(fd) == -1)
+	{
+		perror("Failed to close pipe-max-size file");
+		exit(EXIT_FAILURE);
+	}
+	return size;
+}
+
 int main()
 {
+	std::size_t maxPipeBufferSize = getMaxPipeBufferSize();
+	std::cout << "Max Pipe Buffer Size: " << maxPipeBufferSize << std::endl;
+
 	int ends[2];
 	int ec = pipe(ends);
 	if(ec == -1)

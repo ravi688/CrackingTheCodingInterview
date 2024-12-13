@@ -1,4 +1,5 @@
 #include <iostream>
+#include <concepts>
 
 // NOTE: 'auto' in template parameters types are permitted in C++17 and onwards,
 // Execute: g++ -std=c++14 <this_file.cpp> -o <output> would lead to syntax errors
@@ -41,6 +42,23 @@ constexpr T get_maximum_sub_array_sum2(const T (&array)[N]) noexcept
 	return globalMax;
 }
 
+template<typename T, std::integral auto N>
+constexpr T get_maximum_sub_array_sum3(const T (&array)[N]) noexcept
+{
+	T maxSum = 0;
+	using SizeType = decltype(N);
+	for(SizeType i = 0; i < N; ++i)
+	{
+		T sum = 0;
+		for(SizeType j = i; j < N; ++j)
+		{
+			sum += array[j];
+			maxSum = std::max(sum, maxSum);
+		}
+	}
+	return maxSum;
+}
+
 template<typename T, auto N>
 static void print_array(const T (&array)[N]) noexcept
 {
@@ -66,7 +84,9 @@ int main()
 	std::cout << "Input: "; print_array(array);
 	int result1 = get_maximum_sub_array_sum1(array);
 	int result2 = get_maximum_sub_array_sum2(array);
+	int result3 = get_maximum_sub_array_sum3<int>(array);
 	std::cout << "Output 1: " << result1 << std::endl;
 	std::cout << "Output 2: " << result2 << std::endl;
+	std::cout << "Output 3: " << result3 << std::endl;
 	return 0;
 }

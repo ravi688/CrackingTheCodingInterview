@@ -42,10 +42,11 @@ constexpr T get_maximum_sub_array_sum2(const T (&array)[N]) noexcept
 	return globalMax;
 }
 
+// Time Complexity: O(n * (n + 1) / 2) = O(n^2)
 template<typename T, std::integral auto N>
 constexpr T get_maximum_sub_array_sum3(const T (&array)[N]) noexcept
 {
-	T maxSum = 0;
+	T maxSum = array[0];
 	using SizeType = decltype(N);
 	for(SizeType i = 0; i < N; ++i)
 	{

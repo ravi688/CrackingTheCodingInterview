@@ -9,6 +9,7 @@
 #include <vector> // for std::vector<>
 #include <numeric> // for std::accumulate()
 
+// Time Complexity: T(n) = 2 * T(n - 1) + c
 template<typename UserDataType>
 bool traverse_subsets_until(std::vector<int>& subset, std::vector<int>::size_type index, const std::vector<int>& values, bool (*visitor)(const std::vector<int>& subset, UserDataType ud), UserDataType ud) noexcept
 {
@@ -50,6 +51,7 @@ static std::ostream& operator<<(std::ostream& stream, const std::vector<T>& valu
 
 
 // Solution no 1
+// Time Complexity: T(n) = 2 * T(n) + n + c
 static bool solution1(const std::vector<int>& values, int targetSum) noexcept
 {
 	bool isInterrupted = traverse_subsets_until<int>(values, [](const std::vector<int>& subset, int targetSum) noexcept -> bool

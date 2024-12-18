@@ -8,29 +8,36 @@
 #include <iostream> // for std::cout
 #include <vector> // for std::vector<>
 #include <numeric> // for std::accumulate()
+#include <algorithm> // for std::ranges::sort()
+
+template<typename... Args>
+struct Callback
+{
+	typedef bool (*type)(const std::vector<int>&, Args... args);
+};
 
 // Time Complexity: T(n) = 2 * T(n - 1) + c
-template<typename UserDataType>
-bool traverse_subsets_until(std::vector<int>& subset, std::vector<int>::size_type index, const std::vector<int>& values, bool (*visitor)(const std::vector<int>& subset, UserDataType ud), UserDataType ud) noexcept
+template<typename... UserDataTypes>
+bool traverse_subsets_until(std::vector<int>& subset, std::vector<int>::size_type index, std::vector<int>::size_type startIndex, std::vector<int>::size_type endIndex, const std::vector<int>& values, typename Callback<UserDataTypes...>::type visitor, UserDataTypes... uds) noexcept
 {
-	if(index == values.size())
-		return visitor(subset, ud);
-	subset.push_back(values[index]);
-	if(!traverse_subsets_until<UserDataType>(subset, index + 1, values, visitor, ud))
+	if(index == endIndex)
+		return visitor(subset, uds...);
+	subset.push_back(values[startIndex + index]);
+	if(!traverse_subsets_until<UserDataTypes...>(subset, index + 1, startIndex, endIndex, values, visitor, uds...))
 	{
 		subset.pop_back();
-		if(traverse_subsets_until<UserDataType>(subset, index + 1, values, visitor, ud))
+		if(traverse_subsets_until<UserDataTypes...>(subset, index + 1, startIndex, endIndex, values, visitor, uds...))
 			return true;
 	} else return true;
 	return false;
 }
 
-template<typename UserDataType>
-bool traverse_subsets_until(const std::vector<int>& values, bool (*visitor)(const std::vector<int>& subset, UserDataType ud), UserDataType ud) noexcept
+template<typename... UserDataTypes>
+bool traverse_subsets_until(const std::vector<int>& values, std::vector<int>::size_type start, std::vector<int>::size_type count, typename Callback<UserDataTypes...>::type visitor, UserDataTypes... ud) noexcept
 {
 	std::vector<int> subset;
 	subset.reserve(values.size());
-	return traverse_subsets_until(subset, 0, values, visitor, ud);
+	return traverse_subsets_until<UserDataTypes...>(subset, 0, start, count, values, visitor, ud...);
 }
 
 
@@ -55,7 +62,7 @@ static std::ostream& operator<<(std::ostream& stream, const std::vector<T>& valu
 // Approximate Time Complexity: T(n) = 2^n + n*(n - 1) / 2
 static bool solution1(const std::vector<int>& values, int targetSum) noexcept
 {
-	bool isInterrupted = traverse_subsets_until<int>(values, [](const std::vector<int>& subset, int targetSum) noexcept -> bool
+	bool isInterrupted = traverse_subsets_until<int>(values, 0, values.size(), [](const std::vector<int>& subset, int targetSum) noexcept -> bool
 	{
 		bool result = std::accumulate(subset.begin(), subset.end(), 0) == targetSum;
 		if(result)
@@ -65,8 +72,43 @@ static bool solution1(const std::vector<int>& values, int targetSum) noexcept
 	return isInterrupted;
 }
 
-static bool solution2([[maybe_unused]] const std::vector<int>& values, [[maybe_unused]] int targetSum) noexcept
+static bool solution2(const std::vector<int>& values, int targetSum) noexcept
 {
+	auto n = values.size();
+	auto leftSize = n >> 1;
+	auto rightSize = n - leftSize;
+	std::vector<int> leftSubsetSums;
+	leftSubsetSums.reserve(leftSize);
+	std::vector<int> rightSubsetSums;
+	rightSubsetSums.reserve(rightSize);
+	traverse_subsets_until<std::vector<int>&>(values, 0, leftSize, [](const std::vector<int>& subset, std::vector<int>& subsetSums) noexcept -> bool
+	{
+		subsetSums.push_back(std::accumulate(subset.begin(), subset.end(), 0));
+		return false;
+	}, leftSubsetSums);
+	traverse_subsets_until<std::vector<int>&>(values, leftSize, rightSize, [](const std::vector<int>& subset, std::vector<int>& subsetSums) noexcept -> bool
+	{
+		subsetSums.push_back(std::accumulate(subset.begin(), subset.end(), 0));
+		return false;
+	}, rightSubsetSums);
+	// Sort the left subset sum array into decreasing order
+	std::ranges::sort(leftSubsetSums, std::greater { });
+	// Sort the right subset sum array into increasing order
+	std::ranges::sort(rightSubsetSums, std::less { });
+	std::cout << "left: " << leftSubsetSums << std::endl;
+	std::cout << "right: " << rightSubsetSums << std::endl;
+	// Check if the two lists contain one number in each such that their sum is equal to the 'target sum'
+	std::vector<int>::size_type i = 0;
+	std::vector<int>::size_type j = 0;
+	while((i < leftSubsetSums.size()) && (j < rightSubsetSums.size()))
+	{
+		auto sum = leftSubsetSums[i] + rightSubsetSums[j];
+		if(sum < targetSum)
+			j++;
+		else if(sum > targetSum)
+			i++;
+		else return true;
+	}
 	return false;
 }
 

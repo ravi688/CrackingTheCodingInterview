@@ -1,11 +1,13 @@
 #include <iostream> // for std::cout
 #include <string_view> // for std::string_view
 #include <cstddef> // for std::byte
+#include <cstring> // for std::memcmp()
 #include <vector> // for std::vector
 #include <cstdint> // for std::uint32_t
 #include <queue> // for std::priority_queue<>
 #include <unordered_map> // for std::unordered_map<>
 #include <exception> // for std::exception
+#include <cassert>
 
 struct HuffmanCodeNode
 {
@@ -117,12 +119,15 @@ class BitList
 		// Number of bits
 		std::size_t m_size { };
 	public:
+		bool operator==(const BitList& rhs) const;
 		void pushBack(bool bit);
 		void pushBack(const BitList& list);
 		void popBack();
 		void setAt(std::size_t index, bool value);
 		bool getAt(std::size_t index) const;
+		void clear();
 		BitReference operator[](std::size_t bitIndex);
+		ConstBitReference operator[](std::size_t bitIndex) const;
 		BitIterator begin() { return { *this, 0 }; }
 		BitIterator end() { return { *this, m_size }; }
 		ConstBitIterator cbegin() const { return { *this, 0 }; }
@@ -306,6 +311,30 @@ bool BitList::getAt(std::size_t index) const
 	std::byte byte = m_bytes[byteIndex];
 	return std::to_integer<uint8_t>(byte & (std::byte{1} << localBitIndex));
 }
+void BitList::clear()
+{
+	m_size = 0;
+	m_bytes.clear();
+}
+BitReference BitList::operator[](std::size_t bitIndex)
+{
+	return { *this, bitIndex };
+}
+ConstBitReference BitList::operator[](std::size_t bitIndex) const
+{
+	return { *this, bitIndex };
+}
+static std::ostream& operator<<(std::ostream& stream, const BitList& bitList);
+
+bool BitList::operator==(const BitList& rhs) const
+{
+	// If both lists are of different lengths then they aren't equal
+	if(size() != rhs.size()) return false;
+	// If both bit lists are empty then they are equal
+	if(!size()) return true;
+	// Perform bit-wise comparison
+	return std::memcmp(m_bytes.data(), rhs.m_bytes.data(), sizeof(std::byte) * m_bytes.size()) == 0;
+}
 // ------------------------------------------------------
 
 static std::ostream& operator<<(std::ostream& stream, const BitList& bitList)
@@ -411,9 +440,52 @@ static std::pair<BitList, CodeWordTable>  compress(const std::string_view str) n
 	return { std::move(compressedData), std::move(codewords) };
 }
 
+struct BitListHash
+{
+	std::size_t operator()(const BitList& bitList) const
+	{
+		return bitList.size() % (sizeof(std::size_t) * 8);
+	}
+};
+
 static std::string decompress(const BitList& bits, const std::unordered_map<char, BitList>& codewordTable) noexcept
 {
-	return { };
+	// Inverse the code word table
+	std::unordered_map<BitList, char, BitListHash> inverseCodeWordTable;
+	for(auto& pair : codewordTable)
+	{
+		inverseCodeWordTable.insert({ pair.second, pair.first });
+		assert(inverseCodeWordTable.contains(pair.second));
+	}
+
+	// Restore the string data
+	std::string str;
+	std::size_t i = 0;
+	auto size = bits.size();
+	std::size_t validLength = 0;
+	BitList bufferBits;
+	while(i < size)
+	{
+		bool found = false;
+		do
+		{
+			bufferBits.pushBack(bits[i++]);
+
+			// Check if the collected bits form a code word and exist in the code word table
+			auto it = inverseCodeWordTable.find(bufferBits);
+			found = (it != inverseCodeWordTable.end());
+			// If found then increment the validLength to validate at the end if all the bits have been decoded
+			if(found)
+			{
+				validLength += bufferBits.size();
+				str += it->second;
+				bufferBits.clear();
+			}
+		} while((i < size) && !found);
+	}
+	if(validLength < size)
+		std::cerr << "Error: Failed to decompress all bits\n";
+	return str;
 }
 
 

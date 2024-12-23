@@ -7,7 +7,6 @@
 #include <queue> // for std::priority_queue<>
 #include <unordered_map> // for std::unordered_map<>
 #include <exception> // for std::exception
-#include <cassert>
 
 struct HuffmanCodeNode
 {
@@ -453,10 +452,7 @@ static std::string decompress(const BitList& bits, const std::unordered_map<char
 	// Inverse the code word table
 	std::unordered_map<BitList, char, BitListHash> inverseCodeWordTable;
 	for(auto& pair : codewordTable)
-	{
 		inverseCodeWordTable.insert({ pair.second, pair.first });
-		assert(inverseCodeWordTable.contains(pair.second));
-	}
 
 	// Restore the string data
 	std::string str;

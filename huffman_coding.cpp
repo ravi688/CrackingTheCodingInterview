@@ -346,6 +346,21 @@ static void generateCodeWords(const HuffmanCodeNode* node, CodeWordTable& codewo
 	_generateCodeWords(node, codewordMap, bufferBits);
 }
 
+static void deleteHuffmanCodeTree(HuffmanCodeNode* node)
+{
+	if(node->isLeaf())
+	{
+		// WARN: If we don't cast the pointer to its original type (the type for which the memory block was allocated)
+		// Then we will get valgrind memcheck error telling about mismatch sizes when calling new and delete.
+		auto* leafNode = static_cast<HuffmanCodeLeafNode*>(node);
+		delete leafNode;
+		return;
+	}
+	deleteHuffmanCodeTree(node->right);
+	deleteHuffmanCodeTree(node->left);
+	delete node;
+}
+
 static std::pair<BitList, CodeWordTable>  compress(const std::string_view str) noexcept
 {
 	// Calculate frequency of each character in the string
@@ -383,6 +398,9 @@ static std::pair<BitList, CodeWordTable>  compress(const std::string_view str) n
 	// Generate Code Words for each character
 	CodeWordTable codewords;
 	generateCodeWords(tree, codewords);
+
+	// Free-up allocated memory
+	deleteHuffmanCodeTree(tree);
 
 	// Build compressed data
 	BitList compressedData;

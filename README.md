@@ -12,4 +12,9 @@ Coding Practice for my Job interviews and personal learnings
  - TLB
  - Memory Orderings
  - Bus Faults (unaligned accesses)
-### C++ experiments
+### Algorithms, and Data Structures
+ - Compression and Decompression using Huffman Coding
+ - Nqueens problem
+ - Number of possible paths from top left to bottom right in a grid
+ - AVL tree
+ - Maximum SubArray sum

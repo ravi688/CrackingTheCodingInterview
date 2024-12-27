@@ -98,3 +98,23 @@ const auto has_value = std::any_of(container, greater_than(12));
 #### Use Copy-Paste Detector (CPD)
 https://github.com/pmd/pmd <br>
 In arch linux, you can install it directly. Package name is 'pmd', the tool name is 'pmd-cpd'
+#### Do not use default in switch case statements
+Do the following instead:
+```C++
+enum class Values
+{
+  Value1;
+  Value2;
+  Value3;
+};
+
+std::string_view get_name(Values value)
+{
+ switch(value)
+ {
+  case Value1: return "Value1";
+  case Value2: return "Value2";
+ } // unhandled enum value warning now
+ return "unknown";
+}
+```

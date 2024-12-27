@@ -62,4 +62,6 @@ auto value1 = getValuePtr();
 auto* value2 = getValuePtr();
 // Type of value3 is still 'const MyClass*'
 const auto* value3 = getValuePtr();
+// Type of value4 is 'const MyClass* const'
+const auto value4 = getValuePtr();
 ```

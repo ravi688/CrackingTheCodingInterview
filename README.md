@@ -65,3 +65,12 @@ const auto* value3 = getValuePtr();
 // Type of value4 is 'const MyClass* const'
 const auto value4 = getValuePtr();
 ```
+#### Always use range based for loop over Old loops
+- Avoids type conversions (int to std::size_t or vice-versa)
+- Looks compact
+- NOTE: I've done experiments to demonstrates how bit-width and signness conversions in integers affect performance
+```
+for(const auto& element : container) { }
+// int to std::size_t conversion (or its opposte maybe)
+for(int i = 0; i < container.size(); ++i) { }
+```

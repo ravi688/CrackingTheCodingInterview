@@ -39,3 +39,6 @@ const auto data = [](){
  return return;
 }();
 ```
+#### Use static constexpr for values known at compile time
+- This eliminates dynamic allocations
+- Compiler can better optimize the code which uses the static constexpr variables

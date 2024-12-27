@@ -53,7 +53,7 @@ std::string_view getValue() { return "Hello World"; }
 std::string str = getValue(); // std::string would be instantiated here -> dynamic memory allocation
 ```
 NOTE: Also
-```
+```C++
 // Returns pointer to constant data
 const MyClass* getValuePtr() { return new MyClass { }; }
 // Type of value1 is 'const MyClass*'
@@ -69,7 +69,7 @@ const auto value4 = getValuePtr();
 - Avoids type conversions (int to std::size_t or vice-versa)
 - Looks compact
 - NOTE: I've done experiments to demonstrates how bit-width and signness conversions in integers affect performance
-```
+```C++
 for(const auto& element : container) { }
 // int to std::size_t conversion (or its opposte maybe)
 for(int i = 0; i < container.size(); ++i) { }

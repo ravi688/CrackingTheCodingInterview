@@ -143,3 +143,18 @@ std::string_view get_name(Values value)
   return numerator / denominator;
 }
 ```
+#### Consider deleting problematic conversions
+```C++
+double high_precision_thing(double);
+double high_precision_thing(float) = delete;
+```
+#### Use Build Generators (for portability)
+- Cmake
+- Meson
+- Bazel
+#### Use Package Managers (for dep management)
+- pkg-config
+- conan
+- vcpkg
+#### Use Multiple Compilers
+- Each compiler does different analyses and implements the standard slightly different way.

@@ -30,3 +30,12 @@ Sanitizers must also be enbaled when linking, gcc -fsanitize=address,undefined m
 #### Use Static Analysis
 $ clang-tidy ... <br>
 $ cppcheck ...
+#### Always try to qualify variables as const
+OR
+```C++
+const auto data = [](){
+ std::vector<int> result;
+ // fill result with things.
+ return return;
+}();
+```

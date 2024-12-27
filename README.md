@@ -121,3 +121,25 @@ std::string_view get_name(Values value)
 #### De-template-ize your generic code
 - Move things out of the template code if possible
 - This reduces binary size and compile times
+#### Internal and External APIs [ Optional ]
+- One may allow unchecked input to be passed into internal API functions
+- But check every input in external API functions and produce diagnostic messages
+#### Use [[nodiscard]] liberally
+- It is a C++17 attribute that tells the compiler to warn if a return value is ignored.
+- It can be used on functions or the types itself
+- C++20 adds the ability to provide a description
+```C++
+#include <stdexcept>
+#include <concepts>
+[[nodiscard]] auto divide(std::integral auto numerator, std::integral auto denominator) {
+ // is integer division
+ if (denominator == 0) {
+   throw std::runtime_error("divide by 0!");
+ }
+  return numerator / denominator;
+}
+[[nodiscard]] auto divide(auto numerator, auto denominator) {
+  // is floating point division
+  return numerator / denominator;
+}
+```

@@ -26,10 +26,22 @@ struct MyClass
 	{
 		std::cout << "MyClass destructor" << std::endl;
 	}
+
+	MyClass& operator=(MyClass&) noexcept
+	{
+		std::cout << "MyClass operator=(MyClass&)" << std::endl;
+		return *this;
+	}
+	const MyClass& operator=(const MyClass&) const noexcept
+	{
+		std::cout << "MyClass operator=(const MyClass&)" << std::endl;
+		return *this;
+	}
 };
 
 static const MyClass getValue() noexcept { return { }; }
 static const MyClass* getValuePtr() noexcept { return new MyClass { }; }
+static const int* getValueIntPtr() noexcept { return new int { 5 }; }
 int main()
 {
 	const MyClass obj1;
@@ -48,5 +60,10 @@ int main()
 	// But the following won't compile
 	// const auto value2 = getValuePtr();
 	// value2 = new MyClass { };
+
+	const auto* value3 = getValueIntPtr();
+	// Doesn't compile; even with 'auto* value3'
+	// *value3 = 10;
+	value3 = new int { 10 };
 	return 0;
 }

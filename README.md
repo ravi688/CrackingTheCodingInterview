@@ -89,3 +89,9 @@ class Stack { public: Data pop() { ... return value; } };
 // This would avoid extra copy which may happen otherwise from temporary to 'value'
 for(auto&& value : StackPopIterator(myStack))
 ```
+#### Prefer declaractive sytle (<algorithm>) algorithms
+```C++
+const auto has_value = std::any_of(begin(container), end(container), greater_than(12));
+// C++20
+const auto has_value = std::any_of(container, greater_than(12));
+```

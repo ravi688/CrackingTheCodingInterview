@@ -95,3 +95,6 @@ const auto has_value = std::any_of(begin(container), end(container), greater_tha
 // C++20
 const auto has_value = std::any_of(container, greater_than(12));
 ```
+#### Use Copy-Paste Detector (CPD)
+https://github.com/pmd/pmd <br>
+In arch linux, you can install it directly. Package name is 'pmd', the tool name is 'pmd-cpd'

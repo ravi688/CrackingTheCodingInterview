@@ -47,3 +47,19 @@ static constexpr std::array<int, 5> angles{-90, -45, 0, 45, 90};
 // instead of
 // static const std::vector<int> angles{-90, -45, 0, 45, 90};
 ```
+#### Always use auto to avoid conversions and memory allocations
+```C++
+std::string_view getValue() { return "Hello World"; }
+std::string str = getValue(); // std::string would be instantiated here -> dynamic memory allocation
+```
+NOTE: Also
+```
+// Returns pointer to constant data
+const MyClass* getValuePtr() { return new MyClass { }; }
+// Type of value1 is 'const MyClass*'
+auto value1 = getValuePtr();
+// Type of value2 is still 'const MyClass*'
+auto* value2 = getValuePtr();
+// Type of value3 is still 'const MyClass*'
+const auto* value3 = getValuePtr();
+```

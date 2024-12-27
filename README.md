@@ -18,3 +18,15 @@ Coding Practice for my Job interviews and personal learnings
  - Number of possible paths from top left to bottom right in a grid
  - AVL tree
  - Maximum SubArray sum
+
+
+### C++ Software Engineering
+### Use Warnings
+gcc -Wall -Wextra -Wpedantic main.cpp -o ./main
+-Wpendatic compiler flag disables all the language extensions
+### Use Sanitisers
+gcc -fsanitize=address,undefined -c main.cpp -o ./main.o
+Sanitizers must also be enbaled when linking, gcc -fsanitize=address,undefined main.o -o ./main
+### Use Static Analysis
+$ clang-tidy ...
+$ cppcheck ...

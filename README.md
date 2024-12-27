@@ -42,3 +42,8 @@ const auto data = [](){
 #### Use static constexpr for values known at compile time
 - This eliminates dynamic allocations
 - Compiler can better optimize the code which uses the static constexpr variables
+```C++
+static constexpr std::array<int, 5> angles{-90, -45, 0, 45, 90};
+// instead of
+// static const std::vector<int> angles{-90, -45, 0, 45, 90};
+```

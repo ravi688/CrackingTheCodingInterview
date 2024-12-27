@@ -68,9 +68,23 @@ const auto value4 = getValuePtr();
 #### Always use range based for loop over Old loops
 - Avoids type conversions (int to std::size_t or vice-versa)
 - Looks compact
+- Use clang-tidy's modernize-loop-convert check
 - NOTE: I've done experiments to demonstrates how bit-width and signness conversions in integers affect performance
 ```C++
 for(const auto& element : container) { }
 // int to std::size_t conversion (or its opposte maybe)
 for(int i = 0; i < container.size(); ++i) { }
+```
+#### Use auto in ranged for loops
+```C++
+// Conversion from double to int
+for(const int value : container_of_double) { }
+// Accidental Slicing
+for(const base value : container_of_derived) { }
+// No problem
+for(const auto& value: container) { }
+
+class Stack { public: Data pop() { ... return value; } };
+// This would avoid extra copy which may happen otherwise from temporary to 'value'
+for(auto&& value : StackPopIterator(myStack))
 ```

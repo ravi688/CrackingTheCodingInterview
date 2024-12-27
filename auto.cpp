@@ -28,7 +28,8 @@ struct MyClass
 	}
 };
 
-
+static const MyClass getValue() noexcept { return { }; }
+static const MyClass* getValuePtr() noexcept { return new MyClass { }; }
 int main()
 {
 	const MyClass obj1;
@@ -38,5 +39,14 @@ int main()
 	const MyClass obj4 { };
 	// Calls MyClass(const MyClass&& obj);
 	MyClass obj3 { std::move(obj4) };
+
+	std::cout << "---" << std::endl;
+	auto value = getValue();
+	// The following two lines of code compiles fine
+	const auto* value2 = getValuePtr();
+	value2 = new MyClass { };
+	// But the following won't compile
+	// const auto value2 = getValuePtr();
+	// value2 = new MyClass { };
 	return 0;
 }

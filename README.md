@@ -76,6 +76,7 @@ for(const auto& element : container) { }
 for(int i = 0; i < container.size(); ++i) { }
 ```
 #### Use auto in ranged for loops
+NOTE: std::map<std::string, int>::value_type equals std::pair<const std::string, int>, if you use std::pair<std::string, int>, even just reference, it would create temporary object!
 ```C++
 // Conversion from double to int
 for(const int value : container_of_double) { }

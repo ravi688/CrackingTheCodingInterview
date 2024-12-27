@@ -118,3 +118,6 @@ std::string_view get_name(Values value)
  return "unknown";
 }
 ```
+#### De-template-ize your generic code
+- Move things out of the template code if possible
+- This reduces binary size and compile times

@@ -76,6 +76,7 @@ for(const auto& element : container) { }
 for(int i = 0; i < container.size(); ++i) { }
 ```
 #### Use auto in ranged for loops
+NOTE: std::map<std::string, int>::value_type equals std::pair<const std::string, int>, if you use std::pair<std::string, int>, even just reference, it would create temporary object!
 ```C++
 // Conversion from double to int
 for(const int value : container_of_double) { }
@@ -88,3 +89,72 @@ class Stack { public: Data pop() { ... return value; } };
 // This would avoid extra copy which may happen otherwise from temporary to 'value'
 for(auto&& value : StackPopIterator(myStack))
 ```
+#### Prefer declaractive sytle (<algorithm>) algorithms
+```C++
+const auto has_value = std::any_of(begin(container), end(container), greater_than(12));
+// C++20
+const auto has_value = std::any_of(container, greater_than(12));
+```
+#### Use Copy-Paste Detector (CPD)
+https://github.com/pmd/pmd <br>
+In arch linux, you can install it directly. Package name is 'pmd', the tool name is 'pmd-cpd'
+#### Do not use default in switch case statements
+Do the following instead:
+```C++
+enum class Values
+{
+  Value1;
+  Value2;
+  Value3;
+};
+
+std::string_view get_name(Values value)
+{
+ switch(value)
+ {
+  case Value1: return "Value1";
+  case Value2: return "Value2";
+ } // unhandled enum value warning now
+ return "unknown";
+}
+```
+#### De-template-ize your generic code
+- Move things out of the template code if possible
+- This reduces binary size and compile times
+#### Internal and External APIs [ Optional ]
+- One may allow unchecked input to be passed into internal API functions
+- But check every input in external API functions and produce diagnostic messages
+#### Use [[nodiscard]] liberally
+- It is a C++17 attribute that tells the compiler to warn if a return value is ignored.
+- It can be used on functions or the types itself
+- C++20 adds the ability to provide a description
+```C++
+#include <stdexcept>
+#include <concepts>
+[[nodiscard]] auto divide(std::integral auto numerator, std::integral auto denominator) {
+ // is integer division
+ if (denominator == 0) {
+   throw std::runtime_error("divide by 0!");
+ }
+  return numerator / denominator;
+}
+[[nodiscard]] auto divide(auto numerator, auto denominator) {
+  // is floating point division
+  return numerator / denominator;
+}
+```
+#### Consider deleting problematic conversions
+```C++
+double high_precision_thing(double);
+double high_precision_thing(float) = delete;
+```
+#### Use Build Generators (for portability)
+- Cmake
+- Meson
+- Bazel
+#### Use Package Managers (for dep management)
+- pkg-config
+- conan
+- vcpkg
+#### Use Multiple Compilers
+- Each compiler does different analyses and implements the standard slightly different way.

@@ -22,6 +22,7 @@ Coding Practice for my Job interviews and personal learnings
  - Binary Tree Traversals { In-Order, Pre-Order, Post-Order }
  - Graph Traversals { DFS and BFS }
  - Linked List Intersection find, Cycle detection, Singly Reversal, and Doubly Reversal
+ - Dynamic Bit List (unlike std::bitset<> which is static in size)
 
 
 ### C++ Software Engineering

@@ -188,6 +188,60 @@ static std::vector<LLNode<BTNode<T>*>*> createListOfDepths(BTNode<T>* node)
 	return depths;
 }
 
+
+template<typename T, typename Node, typename SizeType>
+concept BTNodeDepthVisitor = requires(T visitor, Node* node, SizeType depth)
+{
+	{ visitor(node, depth) } -> std::same_as<void>;
+};
+
+template<BTNodeType Node, std::integral SizeType>
+static void BTNodePreOrderDepthTraverse(Node* node, SizeType depth, BTNodeDepthVisitor<Node, SizeType> auto visitor)
+{
+	if(!node)
+		return;
+	visitor(node, depth);
+	BTNodePreOrderDepthTraverse<Node, SizeType>(node->left, depth + 1, visitor);
+	BTNodePreOrderDepthTraverse<Node, SizeType>(node->right, depth + 1, visitor);
+}
+
+template<BTNodeType Node, std::integral SizeType>
+static void BTNodePreOrderDepthTraverse(Node* node, BTNodeDepthVisitor<Node, SizeType> auto visitor)
+{
+	SizeType depth = 0;
+	BTNodePreOrderDepthTraverse<Node, SizeType>(node, depth, visitor);
+}
+
+template<typename T>
+static std::vector<LLNode<BTNode<T>*>*> createListOfDepths2(BTNode<T>* node)
+{
+	std::vector<LLNode<BTNode<T>*>*> depths;
+	std::vector<LLNode<BTNode<T>*>*> heads;
+
+	// NOTE: Why are we doing pre-order traversal here? can't we do the same thing with in-order traversal?
+	// The answer is no, since we are adding a new linked list based on 'size() < (depth + 1)' comparison
+	// For example, in case of in-order traversal, the left-most node will be visited first which will have depth greater
+	// than that of the root node (0) - but our assumption was that root level linked list must be created first, so
+	// that is the reason we can't use in-order traversal and neither post-order traversal.
+
+	// GCC is not able to deduce 'SizeType' template parameter here, so we have to provide that explicitly
+	BTNodePreOrderDepthTraverse<BTNode<T>, std::size_t>(node, [&depths, &heads](BTNode<T>* node, std::size_t depth) noexcept
+	{
+		if(depths.size() < (depth + 1))
+		{
+			depths.push_back(new LLNode<BTNode<T>*> { node });
+			heads.push_back(depths.back());
+		}
+		else
+		{
+			auto& ref = depths[depth];
+			ref->next = new LLNode<BTNode<T>*> { node };
+			ref = ref->next;
+		}
+	});
+	return heads;
+}
+
 template<typename T>
 static void destroyLL(LLNode<T>* node)
 {
@@ -197,21 +251,28 @@ static void destroyLL(LLNode<T>* node)
 	delete node;
 }
 
-template<typename T>
-static void run(std::initializer_list<T> initValues) noexcept
+struct Solution1
 {
-	std::cout << "Input: " << initValues << "\n";
-	std::vector<T> values (initValues);
-	std::ranges::sort(values, std::less<> { });
-	std::cout << "Sorted Output: " << values << "\n";
-	BTNode<T>* bst = createBST(values);
-	std::cout << "BST Output: " << *bst << "\n";
-	std::cout << "In order Traversal: "; BTNodeInOrderTraverse<const BTNode<T>>(bst, [](const BTNode<T>* node) noexcept
+	template<typename T>
+	std::vector<LLNode<BTNode<T>*>*> operator()(BTNode<T>* node)
 	{
-		std::cout << node->value << " ";
-	});
-	std::cout << "\n";
-	std::vector<LLNode<BTNode<T>*>*> depths = createListOfDepths(bst);
+		return createListOfDepths(node);
+	}
+};
+
+struct Solution2
+{
+	template<typename T>
+	std::vector<LLNode<BTNode<T>*>*> operator()(BTNode<T>* node)
+	{
+		return createListOfDepths2(node);
+	}
+};
+
+template<typename Sol, typename T>
+static void runListOfDepths(BTNode<T>* bst) noexcept
+{
+	std::vector<LLNode<BTNode<T>*>*> depths = Sol{ }(bst);
 	std::cout << "List of depths: \n";
 	for(std::size_t i = 0; const auto& ll : depths)
 	{
@@ -229,6 +290,27 @@ static void run(std::initializer_list<T> initValues) noexcept
 	}
 	for(auto& ll : depths)
 		destroyLL(ll);
+}
+
+template<typename T>
+static void run(std::initializer_list<T> initValues) noexcept
+{
+	std::cout << "Input: " << initValues << "\n";
+	std::vector<T> values (initValues);
+	std::ranges::sort(values, std::less<> { });
+	std::cout << "Sorted Output: " << values << "\n";
+	BTNode<T>* bst = createBST(values);
+	std::cout << "BST Output: " << *bst << "\n";
+	std::cout << "In order Traversal: "; BTNodeInOrderTraverse<const BTNode<T>>(bst, [](const BTNode<T>* node) noexcept
+	{
+		std::cout << node->value << " ";
+	});
+	std::cout << "\n";
+	std::cout << "**----list of depths----**\n";
+	std::cout << "Solution 1 (using Queue): \n";
+	runListOfDepths<Solution1>(bst);
+	std::cout << "Solution 2 (using Pre-Order Traversal): \n";
+	runListOfDepths<Solution2>(bst);
 	destroyBST(bst);
 }
 

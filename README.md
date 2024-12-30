@@ -23,6 +23,7 @@ Coding Practice for my Job interviews and personal learnings
  - Graph Traversals { DFS and BFS }
  - Linked List Intersection find, Cycle detection, Singly Reversal, and Doubly Reversal
  - Dynamic Bit List (unlike std::bitset<> which is static in size)
+ - Power Set Problem (Generate subsets of a given set)
 
 
 ### C++ Software Engineering

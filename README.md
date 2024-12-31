@@ -25,6 +25,9 @@ Coding Practice for my Job interviews and personal learnings
  - Dynamic Bit List (unlike std::bitset<> which is static in size)
  - Power Set Problem (Generate subsets of a given set)
  - Binary Search Tree Validation (using Inorder Traversal, OR recursively validating each subtree, etc.)
+### Numerical Algorithms
+ - Finding Stationary Points using Gradient Descend
+ - Finding Roots using Tangent Descend or Newton Raphson Method
 ### C++ Template Argument Deduction
 #### Constness of data member variables of a const qualified class object
 ```C++

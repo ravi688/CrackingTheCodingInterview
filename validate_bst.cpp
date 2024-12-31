@@ -222,6 +222,24 @@ static bool validateBST2(const Node* node) noexcept
 	return validateBST2(node->right);
 }
 
+// Solution no 3 (in principal it works by reversing the way we create BST using sorted array)
+template<BTNodeType Node, typename ValueType>
+static bool validateBST3(const Node* node, std::optional<ValueType> min, std::optional<ValueType> max) noexcept
+{
+	if(!node)
+		return true;
+	if((min && (node->value < min.value())) || (max && (node->value >= max.value())))
+		return false;
+	return validateBST3<Node, ValueType>(node->left, min, node->value) && validateBST3<Node, ValueType>(node->right, node->value, max);
+}
+
+template<BTNodeType Node>
+static bool validateBST3(const Node* node) noexcept
+{
+	using ValueType = decltype(node->value);
+	return validateBST3<Node, ValueType>(node, {}, {});
+}
+
 struct Solution1
 {
 	template<BTNodeType Node>
@@ -239,6 +257,16 @@ struct Solution2
 	{
 		std::cout << "Solution 2: \n";
 		return validateBST2(node);
+	}
+};
+
+struct Solution3
+{
+	template<BTNodeType Node>
+	bool operator()(Node* node) noexcept
+	{
+		std::cout << "Solution 3: \n";
+		return validateBST3(node);
 	}
 };
 
@@ -268,6 +296,7 @@ static void run(std::initializer_list<T> initValues) noexcept
 	std::cout << "Input Set 1: \n";
 	runValidateBST<Solution1>(bst);
 	runValidateBST<Solution2>(bst);
+	runValidateBST<Solution3>(bst);
 	std::cout << "Input Set 2: \n";
 	auto* node = BTNodeGetRightMost(bst);
 	node->right = new BTNode<T> { 2355 };
@@ -281,6 +310,7 @@ static void run(std::initializer_list<T> initValues) noexcept
 	std::cout << "\n";
 	runValidateBST<Solution1>(bst);
 	runValidateBST<Solution2>(bst);
+	runValidateBST<Solution3>(bst);
 	destroyBST(bst);
 }
 

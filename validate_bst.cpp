@@ -5,6 +5,7 @@
 #include <queue> // for std::queue<>
 #include <initializer_list> // for std::initializer_list<>
 #include <type_traits>
+#include <optional> // for std::optional<>
 
 // Binary Tree Node holding data value of type T
 template<typename T>
@@ -187,7 +188,7 @@ static bool isForAllNodes(Node* node, ValueType& value, BTNodePredicateVisitor<N
 	return isForAllNodes(node->right, value, visitor);
 }
 
-// Solution no 1
+// Solution no 1 (using recursive BST property validation for each subtree)
 template<BTNodeType Node>
 static bool validateBST1(const Node* node) noexcept
 {
@@ -205,10 +206,20 @@ static bool validateBST1(const Node* node) noexcept
 	return isLeftLess && isRightGreater && validateBST1(node->left) && validateBST1(node->right);
 }
 
+// Solution no 2 (using InOrder traversal)
 template<BTNodeType Node>
 static bool validateBST2(const Node* node) noexcept
 {
-	return false;
+	using ValueType = decltype(node->value);
+	static std::optional<ValueType> lastValue {};
+	if(!node)
+		return true;
+	if(!validateBST2(node->left))
+		return false;
+	if(lastValue && lastValue.value() > node->value)
+		return false;
+	lastValue = node->value;
+	return validateBST2(node->right);
 }
 
 struct Solution1

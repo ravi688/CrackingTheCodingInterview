@@ -15,9 +15,15 @@ Coding Practice for my Job interviews and personal learnings
 ### Algorithms, and Data Structures
  - Compression and Decompression using Huffman Coding
  - Nqueens problem
+ - Coins problem
  - Number of possible paths from top left to bottom right in a grid
  - AVL tree
  - Maximum SubArray sum
+ - Binary Tree Traversals { In-Order, Pre-Order, Post-Order }
+ - Graph Traversals { DFS and BFS }
+ - Linked List Intersection find, Cycle detection, Singly Reversal, and Doubly Reversal
+ - Dynamic Bit List (unlike std::bitset<> which is static in size)
+ - Power Set Problem (Generate subsets of a given set)
 
 
 ### C++ Software Engineering

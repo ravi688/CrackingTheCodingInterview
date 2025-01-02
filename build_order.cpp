@@ -69,7 +69,8 @@ static bool buildProjects(char startID, std::unordered_map<char, Project>& graph
 		return true;
 	project.status = Status::Building;
 	for(const auto& dependency : project.dependencies)
-		buildProjects(dependency, graph, buildOrder);
+		if(!buildProjects(dependency, graph, buildOrder))
+			return false;
 	project.status = Status::Built;
 	buildOrder.push_back(startID);
 	return true;
@@ -85,6 +86,8 @@ static bool buildProjects(std::unordered_map<char, Project>& graph, std::vector<
 
 static void run(const std::span<const char> projects, const std::span<const std::pair<char, char>> dependencies) noexcept
 {
+	static std::size_t runCounter = 0;
+	std::cout << "RUN: " << runCounter++ << "\n";
 	// A graph representing dependencies would be a directed graph which may have cycles also, in which case
 	// there would be no defined build order among the projects.
 
@@ -123,5 +126,15 @@ int main()
 		{ 'd', 'c' }
 	} };
 	run(std::span { projects }, std::span { dependencies });
+	constexpr std::array<std::pair<char, char>, 6> dependencies2 {
+	{
+		{ 'a', 'd' },
+		{ 'f', 'b' },
+		{ 'b', 'd' },
+		{ 'f', 'a' },
+		{ 'd', 'c' },
+		{ 'd', 'f' }
+	} };
+	run(std::span { projects }, std::span { dependencies2 });
 	return 0;
 }

@@ -32,5 +32,8 @@ int main()
 	Derived derived;
 	Derived derived2;
 	derived = derived2;
+	Base& base1 = derived;
+	Base& base2 = derived2;
+	base1 = base2;
 	return 0;
 }

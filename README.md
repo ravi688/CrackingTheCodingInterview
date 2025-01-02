@@ -24,7 +24,87 @@ Coding Practice for my Job interviews and personal learnings
  - Linked List Intersection find, Cycle detection, Singly Reversal, and Doubly Reversal
  - Dynamic Bit List (unlike std::bitset<> which is static in size)
  - Power Set Problem (Generate subsets of a given set)
+ - Binary Search Tree Validation (using Inorder Traversal, OR recursively validating each subtree, etc.)
+### Numerical Algorithms
+ - Finding Stationary Points using Gradient Descend
+ - Finding Roots using Tangent Descend or Newton Raphson Method
+### C++ Template Argument Deduction
+#### Constness of data member variables of a const qualified class object
+```C++
+#include <type_traits>
 
+struct Data
+{
+	int value;
+};
+
+template<typename ValueType>
+static void function(ValueType& value, auto visitor)
+{
+	visitor(value);
+}
+
+template<typename T>
+struct remove_pointer
+{
+	typedef T type;
+};
+
+template<typename T> struct remove_pointer<T*>
+{
+	typedef T type;
+};
+
+template<typename T>
+struct is_refers_to_const_value
+{
+	static constexpr bool value = std::is_const<typename remove_pointer<typename std::remove_reference<T>::type>::type>::value;
+};
+
+template<typename T> requires(std::is_pointer<T>::value)
+static void functionWrapper(T& t)
+{
+	// NOTE: if T is const Data*
+	// then decltype(t->value) would return 'int'
+	// That means decltype() doesn't care about the cv-qualification of t when t->value is passed into it!
+	// Therefore we need to add const qualification based on if t refers to a constant value
+	using ValueType = typename std::conditional<is_refers_to_const_value<decltype(t)>::value,
+				typename std::add_const<decltype(t->value)>::type,
+				decltype(t->value)>::type;
+	function(t->value, [](ValueType& value) { });
+}
+
+static void myFunction()
+{
+	Data* data = new Data { };
+	functionWrapper(data);
+	const Data* const_data = data;
+	functionWrapper(const_data);
+}
+```
+#### What does std::is_const<>::value evalutes to for reference types?
+```C++
+#include <type_traits>
+
+struct Data
+{
+	char __bytes[255];
+};
+
+static void function()
+{
+	const Data value { };
+	const Data& dataRef = value;
+	static_assert(std::is_same<decltype(dataRef), const Data&>::value);
+	// std::is_const<> to reference types always returns false as we can't qualify a reference type as 'const'
+	// NOTE: std::is_const<> tells whether the type is const qualified or not, it doesn't tell the intrinsic constness!
+	static_assert(std::is_const<decltype(dataRef)>::value); // it fails here
+
+	// Also
+	// std::is_const<const int*>::value or std::is_const<int const*>::value would evaluate to false
+	// And std::is_const<int * const>::value or std::is_const<const int* const>::value would evaluate to true
+}
+```
 
 ### C++ Software Engineering
 #### Use Warnings

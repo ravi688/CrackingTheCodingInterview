@@ -156,6 +156,8 @@ static std::size_t BTNodeGetHeight(Node* node) noexcept
 	return std::max(BTNodeGetHeight(node->left), BTNodeGetHeight(node->right)) + ((node->left || node->right) ? 1 : 0);
 }
 
+// WARN: This solution has a serious flaw, it just swaps the subtrees recursively! So it doesn't produce exhaustive list of
+// possible sequences.
 template<typename T, std::integral SizeType>
 static void generateBSTSequences(BTNode<T>* node, SizeType& n,  std::vector<T>& seq, std::vector<std::vector<T>>& seqs) noexcept
 {
@@ -206,6 +208,68 @@ static std::vector<std::vector<T>> generateBSTSequences(BTNode<T>* node) noexcep
 	return seqs;
 }
 
+template<typename T>
+static void generateWeaves(const std::span<const T> s1, const std::span<const T> s2,
+				std::size_t index1, std::size_t index2,
+				std::vector<T>& buffer,
+				std::vector<std::vector<T>>& seqs)
+{
+	if(buffer.size() >= (s1.size() + s2.size()))
+	{
+		seqs.push_back(buffer);
+		return;
+	}
+	for(auto i = index1; i < s1.size(); ++i)
+	{
+		buffer.push_back(s1[i]);
+		generateWeaves(s1, s2, i + 1, index2, buffer, seqs);
+		buffer.pop_back();
+	}
+	for(auto i = index2; i < s2.size(); ++i)
+	{
+		buffer.push_back(s2[i]);
+		generateWeaves(s1, s2, index1, i + 1, buffer, seqs);
+		buffer.pop_back();
+	}
+}
+
+template<typename T>
+static void generateWeaves(const std::span<const T> s1, const std::span<const T> s2, std::vector<std::vector<T>>& seqs)
+{
+	std::vector<T> buffer;
+	generateWeaves(s1, s2, 0, 0, buffer, seqs);
+}
+
+template<typename T>
+static void push_front(std::vector<T>& v, const T& value)
+{
+	v.insert(v.begin(), value);
+}
+
+template<typename T>
+static std::vector<std::vector<T>> generateBSTSequences2(BTNode<T>* node) noexcept
+{
+	// Always think theoretically, so if we have null node that means there is only one sequence which
+	// could lead to a null node (or an empty bst), it is the empty sequence.
+	if(!node)
+	{
+		std::vector<std::vector<T>> seqs;
+		seqs.push_back(std::vector<T>({ }));
+		return seqs;
+	}
+	std::vector<std::vector<T>> leftSeqs = generateBSTSequences2(node->left);
+	std::vector<std::vector<T>> rightSeqs = generateBSTSequences2(node->right);
+	// Otherwise weave the sequences in all possible pair combinations
+	std::vector<std::vector<T>> seqs;
+	for(const auto& seq1 : leftSeqs)
+		for(const auto& seq2 : rightSeqs)
+			generateWeaves(std::span { seq1 }, std::span { seq2 }, seqs);
+	// Parent node value is always added first in a valid BST
+	for(auto& seq : seqs)
+		push_front(seq, node->value);
+	return seqs;
+}
+
 struct Solution1
 {
 	template<typename T>
@@ -213,6 +277,16 @@ struct Solution1
 	{
 		std::cout << "Solution 1: \n";
 		return generateBSTSequences(node);
+	}
+};
+
+struct Solution2
+{
+	template<typename T>
+	std::vector<std::vector<T>> operator()(BTNode<T>* node) noexcept
+	{
+		std::cout << "Solution 2: \n";
+		return generateBSTSequences2(node);
 	}
 };
 
@@ -243,6 +317,7 @@ static void run(std::initializer_list<T> initValues) noexcept
 	std::cout << "**----BST Sequences----**\n";
 	std::cout << "Input Set 1: \n";
 	runBSTSequences<Solution1>(bst);
+	runBSTSequences<Solution2>(bst);
 	std::cout << "Input Set 2: \n";
 	auto* node = BTNodeGetRightMost(bst);
 	node->right = new BTNode<T> { 2355 };
@@ -250,19 +325,22 @@ static void run(std::initializer_list<T> initValues) noexcept
 	node->right->right->right = new BTNode<T> { -443 };
 	node->right->right->right->right = new BTNode<T> { -6490 };
 	runBSTSequences<Solution1>(bst);
+	runBSTSequences<Solution2>(bst);
 	destroyBST(bst);
 	std::cout << "Input Set 3: \n";
 	{
 		auto* node = new BTNode<T> { 2 };
 		node->left = new BTNode<T> { 1 };
 		node->right = new BTNode<T> { 3 };
+		node->right->right = new BTNode<T> { 4 };
 		runBSTSequences<Solution1>(node);
+		runBSTSequences<Solution2>(node);
 		destroyBST(node);
 	}
 }
 
 int main()
 {
-	run<int>({ 100, 2, 3, 4, 0, 45, 32, 56, 7, 8, 10, -1, 2, -4 });
+	run<int>({ 100, 2, 3, 4, -1, -2, -3 });
 	return 0;
 }

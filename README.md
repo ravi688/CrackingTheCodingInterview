@@ -249,3 +249,16 @@ double high_precision_thing(float) = delete;
 - vcpkg
 #### Use Multiple Compilers
 - Each compiler does different analyses and implements the standard slightly different way.
+
+### Insightful lessons from very experienced Software Engineers and Scientists
+#### "Simplicity is the prerequisite to reliability"
+I should always try to make the code simple to understand for others so that its reliability could be judged.
+#### "If the code can't easily be tested then it is not well designed"
+I should design a test first, which will also help me clear any interface ambiguities and reach to a solid interface specification.
+Once interface has been derived, the implementation usually becomes easier (my own experience).
+#### "If you have even a slightest doubt about an Algorithm then Write (Theoretical) Proofs for its correctness"
+Writing (mathematical, theoretical) proofs guarantee that the algorithm or the code would work under all inputs.
+#### "Do not leave unit testing for later, Write everytime you add new code"
+Any new data structure or algorithm I add must be accompanied its test suite consisting of normal inputs and inputs leading to errors.
+#### "Study Mathematics to become a real Computer Scientist"
+Almost all popular computer scienists I came across on the web or textbooks are all have strong background in Mathematics or Physics.

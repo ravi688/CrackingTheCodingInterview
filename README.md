@@ -27,7 +27,8 @@ Coding Practice for my Job interviews and personal learnings
  - Binary Search Tree Validation (using Inorder Traversal, OR recursively validating each subtree, etc.)
  - In-Order Successor of a node in a Binary Tree
  - Finding Build Order of many projects given their dependency graph using DFS
- - Generating all possible arrays which would generate a given binary search tree { Recursive Method (Permuting each sub-tree Mental Model) }
+ - Generating all possible arrays which would generate a given binary search tree <br>
+ 	{ Recursive Method (Permuting each sub-tree Mental Model procuded unexhaustive solutions), Weaving the output from both the subtrees produces all solutions }
  - Generating all possible weaved arrays out of two given arrays such that relative order among the elements remain consistent { Recursive Method (Ladder-Climbing Mental Model) }
 ### Numerical Algorithms
  - Finding Stationary Points using Gradient Descend

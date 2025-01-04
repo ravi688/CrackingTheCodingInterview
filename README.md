@@ -27,7 +27,8 @@ Coding Practice for my Job interviews and personal learnings
  - Binary Search Tree Validation (using Inorder Traversal, OR recursively validating each subtree, etc.)
  - In-Order Successor of a node in a Binary Tree
  - Finding Build Order of many projects given their dependency graph using DFS
- - Generating all possible arrays which would generate a given binary search tree { Recursive Method (Permuting each sub-tree Mental Model) }
+ - Generating all possible arrays which would generate a given binary search tree <br>
+ 	{ Recursive Method (Permuting each sub-tree Mental Model procuded unexhaustive solutions), Weaving the output from both the subtrees produces all solutions }
  - Generating all possible weaved arrays out of two given arrays such that relative order among the elements remain consistent { Recursive Method (Ladder-Climbing Mental Model) }
 ### Numerical Algorithms
  - Finding Stationary Points using Gradient Descend
@@ -248,3 +249,29 @@ double high_precision_thing(float) = delete;
 - vcpkg
 #### Use Multiple Compilers
 - Each compiler does different analyses and implements the standard slightly different way.
+
+### Miscelleneous
+#### Type constraint on Pointer types leads to substituion failure with nullptr
+```C++
+struct SomeType { };
+template<typename T>
+concept SomeTypeLike = std::is_same_v<T, SomeType>;
+template<SomeTypeLike T>
+void myFunction(T* myPtr) { }
+//...
+myFunction(nullptr) // no matching call because of substitution failure
+myFunction(static_cast<SomeType*>(nullptr)) // OK
+```
+
+### Insightful lessons from very experienced Software Engineers and Scientists
+#### "Simplicity is the prerequisite to reliability"
+I should always try to make the code simple to understand for others so that its reliability could be judged.
+#### "If the code can't easily be tested then it is not well designed"
+I should design a test first, which will also help me clear any interface ambiguities and reach to a solid interface specification.
+Once interface has been derived, the implementation usually becomes easier (my own experience).
+#### "If you have even a slightest doubt about an Algorithm then Write (Theoretical) Proofs for its correctness"
+Writing (mathematical, theoretical) proofs guarantee that the algorithm or the code would work under all inputs.
+#### "Do not leave unit testing for later, Write everytime you add new code"
+Any new data structure or algorithm I add must be accompanied its test suite consisting of normal inputs and inputs leading to errors.
+#### "Study Mathematics to become a real Computer Scientist"
+Almost all popular computer scienists I came across on the web or textbooks are all have strong background in Mathematics or Physics.

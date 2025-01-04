@@ -30,6 +30,8 @@ Coding Practice for my Job interviews and personal learnings
  - Generating all possible arrays which would generate a given binary search tree <br>
  	{ Recursive Method (Permuting each sub-tree Mental Model procuded unexhaustive solutions), Weaving the output from both the subtrees produces all solutions }
  - Generating all possible weaved arrays out of two given arrays such that relative order among the elements remain consistent { Recursive Method (Ladder-Climbing Mental Model) }
+ - Checking if a binary tree is a subtree of another binary tree using recursion and substring matching.
+ - Finding all possible paths, not necessarily starting from root and ending to leaves, which sum to a given target sum { using Recursion }
 ### Numerical Algorithms
  - Finding Stationary Points using Gradient Descend
  - Finding Roots using Tangent Descend or Newton Raphson Method

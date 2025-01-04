@@ -250,6 +250,19 @@ double high_precision_thing(float) = delete;
 #### Use Multiple Compilers
 - Each compiler does different analyses and implements the standard slightly different way.
 
+### Miscelleneous
+#### Type constraint on Pointer types leads to substituion failure with nullptr
+```C++
+struct SomeType { };
+template<typename T>
+concept SomeTypeLike = std::is_same_v<T, SomeType>;
+template<SomeTypeLike T>
+void myFunction(T* myPtr) { }
+//...
+myFunction(nullptr) // no matching call because of substitution failure
+myFunction(static_cast<SomeType*>(nullptr)) // OK
+```
+
 ### Insightful lessons from very experienced Software Engineers and Scientists
 #### "Simplicity is the prerequisite to reliability"
 I should always try to make the code simple to understand for others so that its reliability could be judged.

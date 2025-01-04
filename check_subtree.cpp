@@ -87,6 +87,30 @@ static void BTNodeInOrderTraverse(Node* node, BTNodeVisitor<Node> auto visitor, 
 }
 
 
+template<typename T, typename Node>
+concept BTNodePredVisitor = requires(T visitor, Node* node)
+{
+	{ visitor(node) } -> std::same_as<bool>;
+};
+
+template<BTNodeType Node>
+static bool BTNodeInOrderTraverseUntil(Node* node, BTNodePredVisitor<Node> auto visitor, bool isVisitNullNodes = false)
+{
+	if(!node)
+	{
+		if(isVisitNullNodes)
+			return visitor(nullptr);
+		return true;
+	}
+	if(!BTNodeInOrderTraverseUntil(node->left, visitor, isVisitNullNodes))
+		return false;
+	if(!visitor(node))
+		return false;
+	if(!BTNodeInOrderTraverseUntil(node->right, visitor, isVisitNullNodes))
+		return false;
+	return true;
+}
+
 template<BTNodeType Node>
 static void BTNodePreOrderTraverse(Node* node, BTNodeVisitor<Node> auto visitor, bool isVisitNullNodes = false)
 {
@@ -208,9 +232,27 @@ static bool checkSubTree1(const BTNode<T>* bt1, const BTNode<T>* bt2)
 }
 
 template<typename T>
+static bool matchBT(const BTNode<T>* bt1, const BTNode<T>* bt2)
+{
+	// If both the nodes are null then they are equal,
+	// If exactly one of them is null then they aren't equal
+	if(!bt1 || !bt2)
+		return bt1 == bt2;
+	return (bt1->value == bt2->value) && matchBT(bt1->left, bt2->left) && matchBT(bt1->right, bt1->right);
+}
+
+template<typename T>
 static bool checkSubTree2(const BTNode<T>* bt1, const BTNode<T>* bt2)
 {
-	return false;
+	// Empty tree (null) is always a sub-tree
+	if(!bt2)
+		return true;
+	return !BTNodeInOrderTraverseUntil(bt1, [bt2](const BTNode<T>* node) noexcept -> bool
+	{
+		bool isFound = (node->value == bt2->value) && matchBT(node, bt2);
+		// Keep traversing until a matching subtree is found
+		return !isFound;
+	});
 }
 
 struct Solution1

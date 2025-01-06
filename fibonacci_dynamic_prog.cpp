@@ -31,6 +31,21 @@ static std::size_t calcFibonacci2(const std::size_t n)
 	return calcFibonacci2(n, memo);
 }
 
+// Solution 3 (pure iterative approach), this is much faster than Solution 1 and Solution 2 both
+static std::size_t calcFibonacci3(const std::size_t n)
+{
+	if(n == 0) return 0;
+	std::size_t a = 0;
+	std::size_t b = 1;
+	for(std::size_t i = 1; i < n; ++i)
+	{
+		std::size_t t = a + b;
+		a = b;
+		b = t;
+	}
+	return a + b;
+}
+
 struct Solution1
 {
 	std::size_t operator()(const std::size_t n)
@@ -47,6 +62,13 @@ struct Solution2
 	}
 };
 
+struct Solution3
+{
+	std::size_t operator()(const std::size_t n)
+	{
+		return calcFibonacci3(n);
+	}
+};
 
 template<typename Sol>
 static void runCalcFibonacci(const std::size_t n)
@@ -69,6 +91,8 @@ static void run(const std::size_t n)
 	runCalcFibonacci<Solution1>(n);
 	std::cout << "**Solution 2**:\n";
 	runCalcFibonacci<Solution2>(n);
+	std::cout << "**Solution 3**:\n";
+	runCalcFibonacci<Solution3>(n);
 }
 
 int main()

@@ -26,12 +26,41 @@ static std::vector<std::vector<U>> generatePowerSets1(const std::span<T> array)
 	return subsets;
 }
 
+template<typename T, typename U = typename std::remove_cv<T>::type>
+static void addSubset(const std::span<T> array, std::size_t filter, std::vector<std::vector<U>>& subsets)
+{
+	std::vector<U> set;
+	for(std::size_t i = 0; i < array.size(); ++i)
+		if(filter & (1ull << i))
+			set.push_back(array[i]);
+	subsets.push_back(std::move(set));
+}
+
+template<typename T, typename U = typename std::remove_cv<T>::type>
+static std::vector<std::vector<U>> generatePowerSets2(const std::span<T> array)
+{
+	std::vector<std::vector<U>> subsets;
+	std::size_t subsetCount = 1ull << array.size();
+	for(std::size_t i = 0; i < subsetCount; ++i)
+		addSubset(array, i, subsets);
+	return subsets;
+}
+
 template<typename T>
 struct Solution1
 {
 	auto operator()(const std::span<T> array)
 	{
 		return generatePowerSets1<T>(array);
+	}
+};
+
+template<typename T>
+struct Solution2
+{
+	auto operator()(const std::span<T> array)
+	{
+		return generatePowerSets2<T>(array);
 	}
 };
 
@@ -62,7 +91,10 @@ static void runGeneratePowerSets(const std::span<T> array)
 template<typename T>
 static void run(std::initializer_list<T> array)
 {
+	std::cout << "**Solution no 1**\n";
 	runGeneratePowerSets<Solution1>(std::span { std::data(array), array.size() });
+	std::cout << "**Solution no 2**\n";
+	runGeneratePowerSets<Solution2>(std::span { std::data(array), array.size() });
 }
 
 int main()

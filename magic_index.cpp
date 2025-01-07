@@ -3,6 +3,7 @@
 #include <span>
 #include <initializer_list>
 #include <concepts>
+#include <chrono>
 
 template<std::integral T>
 static std::optional<std::size_t> findMagicIndex1(const std::span<T> array)
@@ -33,9 +34,25 @@ static std::optional<std::size_t> findMagicIndex2(const std::span<T> array)
 }
 
 template<std::integral T>
-static std::optional<std::size_t> findMagicIndex3([[maybe_unused]] const std::span<T> array)
+static std::optional<std::size_t> findMagicIndex3(const std::span<T> array, std::size_t start, std::size_t end)
 {
+	if(start >= end) return { };
+	std::size_t midIndex = (end - start) / 2;
+	if(array[midIndex] == static_cast<T>(midIndex))
+		return { midIndex };
+	auto result = findMagicIndex3(array, start, midIndex);
+	if(result)
+		return result;
+	// The right half of the array might contain a magic index only if value at 'midIndex' is less than 'midIndex'
+	if(array[midIndex] < static_cast<T>(midIndex))
+		return findMagicIndex3(array, midIndex + 1, end);
 	return { };
+}
+
+template<std::integral T>
+static std::optional<std::size_t> findMagicIndex3(const std::span<T> array)
+{
+	return findMagicIndex3(array, 0, array.size());
 }
 
 template<std::integral T>
@@ -83,11 +100,15 @@ template<template<typename> typename Sol, typename T>
 static void runFindMagicIndex(const std::span<T> array)
 {
 	std::cout << "Input: " << array << "\n";
+	auto start = std::chrono::steady_clock::now();
 	std::optional<std::size_t> index = Sol<T> { } (array);
+	auto end = std::chrono::steady_clock::now();
+	auto elapsed = std::chrono::duration_cast<std::chrono::duration<float, std::milli>>(end - start).count();
 	if(index)
 		std::cout << "Output: " << *index << "\n";
 	else
 		std::cout << "Output: not found\n";
+	std::cout << "Time taken: " << elapsed << " ms\n";
 }
 
 template<std::integral T>

@@ -32,6 +32,8 @@ Coding Practice for my Job interviews and personal learnings
  - Generating all possible weaved arrays out of two given arrays such that relative order among the elements remain consistent { Recursive Method (Ladder-Climbing Mental Model) }
  - Checking if a binary tree is a subtree of another binary tree using recursion and substring matching.
  - Finding all possible paths, not necessarily starting from root and ending to leaves, which sum to a given target sum { using Recursion }
+ - Finding magic index of an array (magic index == array[magic index]) using recursion (halving the search space recursively)
+ - Recursively multiply two positive integers using only addition/substraction/bitshifting while minimizing number of such operations
 ### Numerical Algorithms
  - Finding Stationary Points using Gradient Descend
  - Finding Roots using Tangent Descend or Newton Raphson Method

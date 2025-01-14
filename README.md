@@ -34,6 +34,10 @@ Coding Practice for my Job interviews and personal learnings
  - Finding all possible paths, not necessarily starting from root and ending to leaves, which sum to a given target sum { using Recursion }
  - Finding magic index of an array (magic index == array[magic index]) using recursion (halving the search space recursively)
  - Recursively multiply two positive integers using only addition/substraction/bitshifting while minimizing number of such operations
+ - Tower of Hanoi (transfering all disks from one tower to another using another tower as buffer while respecting the constraints) { using Recursion }
+ - Generating all permutations of a string { using Recursion }
+ - Generating all permutations of a string such that no duplication permutation occurs { using Recursion }
+ - Generating all valid permutations of given pairs of paranthesises { using Recursion }
 ### Numerical Algorithms
  - Finding Stationary Points using Gradient Descend
  - Finding Roots using Tangent Descend or Newton Raphson Method

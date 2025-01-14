@@ -4,6 +4,7 @@
 #include <unordered_map>
 #include <string_view>
 #include <chrono>
+#include <functional>
 
 static bool isValidParens(const std::string_view str)
 {
@@ -71,11 +72,53 @@ static std::vector<std::string> validParens1(const std::size_t n)
 	return generatePermutations3(str);
 }
 
+static void validParens2(std::size_t openCount, std::size_t closeCount, std::string& str, std::vector<std::string>& parens)
+{
+	// If all places hold either '(' or ')' then we have reached to one possible valid permutation
+	if((openCount + closeCount) == str.size())
+	{
+		parens.push_back(str);
+		return;
+	}
+	// The number of open parentheses can never greater than the half of the number of chars in the string,
+	// Because, there needs to be as many close parentheses to cancel the open parentheses, totalling the number of chars to the size of the string.
+	// So, here we only add an open parentheses if the current number of open parantheses is less than the half of the string's size.
+	if(openCount < (str.size() / 2))
+	{
+		str[openCount + closeCount] = '(';
+		// Recursively generate next valid '(' or ')'
+		validParens2(openCount + 1, closeCount, str, parens);
+	}
+	// Only add close parantheses if the current number of close parantheses is less than the open parantheses
+	if(openCount > closeCount)
+	{
+		str[openCount + closeCount] = ')';
+		// Recursively generate next valid '(' or ')'
+		validParens2(openCount, closeCount + 1, str, parens);
+	}
+}
+
+static std::vector<std::string> validParens2(const std::size_t n)
+{
+	std::string str(n * 2, ' ');
+	std::vector<std::string> parens;
+	validParens2(0, 0, str, parens);
+	return parens;
+}
+
 struct Solution1
 {
 	std::vector<std::string> operator()(const std::size_t n)
 	{
 		return validParens1(n);
+	}
+};
+
+struct Solution2
+{
+	std::vector<std::string> operator()(const std::size_t n)
+	{
+		return validParens2(n);
 	}
 };
 
@@ -102,6 +145,8 @@ static void run(const std::size_t n)
 	std::cout << "-----------RUN: " << runCount << " ------------\n";
 	std::cout << "**Solution no 1**\n";
 	runValidParens<Solution1>(n);
+	std::cout << "**Solution no 2**\n";
+	runValidParens<Solution2>(n);
 }
 
 int main()

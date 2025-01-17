@@ -40,6 +40,7 @@ Coding Practice for my Job interviews and personal learnings
  - Generating all valid permutations of given pairs of paranthesises { using Recursion }
  - Generating all possible frequency of given set of coins to make a given sum { using Recursion }
  - Generating all possible ways of evaluating (associating operands to operators) a given boolean expression such that the result is equal to a given value { using Recursion }
+ - Finding an element in a sorted then rotated array using Recursion method and Iterative method
 ### Numerical Algorithms
  - Finding Stationary Points using Gradient Descend
  - Finding Roots using Tangent Descend or Newton Raphson Method

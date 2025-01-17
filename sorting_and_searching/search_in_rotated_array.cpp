@@ -22,6 +22,7 @@ static std::optional<std::size_t> binary_search(const std::span<T>& array, std::
 	return { };
 }
 
+// Solution no 1 (Recursive)
 template<typename T, typename U = T>
 static std::optional<std::size_t> find_in_rotated_array(const std::span<T>& array, std::size_t start, std::size_t end, const U& value)
 {
@@ -67,6 +68,63 @@ static std::span<T>::iterator find_in_rotated_array(const std::span<T>& array, c
 	return std::next(array.begin(), result.value());
 }
 
+// Solution no 2 (Iterative)
+template<typename T, typename U = T>
+static std::optional<std::size_t> find_in_rotated_array2(const std::span<T>& array, std::size_t start, std::size_t end, const U& value)
+{
+	// If we are run out of the elements to search
+	while(start < end)
+	{
+		// We can't divide a cell (a single element array) into half
+		// It can only be divided into an empty array and the original one element array itself
+		// So we need to detect this case here and handle it.
+		if((end - start) == 1)
+		{
+			if(array[start] == static_cast<T>(value))
+				return { start };
+			break;
+		}
+		std::size_t middle = (end + start) / 2;
+		std::optional<std::size_t> index;
+		// If the left half is sorted
+		if(array[start] <= array[middle])
+		{
+			// Exclude middle, perform binary search in the left half since it is sorted
+			index = binary_search(array, start, middle, value);
+			if(!index)
+			{
+				// Include middle, perform find_in_rotated_array in the right half since it is not fully sorted
+				start = middle;
+				continue;
+			}
+			else return index;
+		}
+		else // or if the right half is sorted
+		{
+			// Include middle, perform binary search in the right half since it is sorted
+			index = binary_search(array, middle, end, value);
+			if(!index)
+			{
+				// Exclude middle, perform find_in_rotated_array in the left half since it is not fully sorted
+				end = middle;
+				continue;
+			}
+			else return index;
+		}
+	}
+	return { };
+}
+
+
+template<typename T, typename U = T>
+static std::span<T>::iterator find_in_rotated_array2(const std::span<T>& array, const U& value)
+{
+	auto result = find_in_rotated_array2(array, 0, array.size(), value);
+	if(!result)
+		return array.end();
+	return std::next(array.begin(), result.value());
+}
+
 // Rotate the array by n steps towards left
 template<typename T>
 static void rotate_array(std::span<T>&& array, const std::size_t n)
@@ -101,7 +159,7 @@ struct Solution2
 	template<typename T, typename U = T>
 	auto operator()(const std::span<T>& array, const U& value)
 	{
-		return array.end();
+		return find_in_rotated_array2(array, value);
 	}
 };
 

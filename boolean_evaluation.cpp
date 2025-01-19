@@ -156,6 +156,8 @@ struct Solution2
 	}
 };
 
+// For this optimization to work correctly in general case , all string_view(s) which are identical by value must have identical base address (pointer returned by data() method).
+// For memoization purpose, this would still work but may lead to inconsistent performance results if there are many string_view(s) identical by value but different by their base addresses (data()).
 struct SVEfficientHash
 {
 	std::size_t operator()(const std::string_view str) const

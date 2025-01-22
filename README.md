@@ -45,6 +45,9 @@ Coding Practice for my Job interviews and personal learnings
 ### Numerical Algorithms
  - Finding Stationary Points using Gradient Descend
  - Finding Roots using Tangent Descend or Newton Raphson Method
+### Reusable Code Snippets
+1. Dynamic Bit Set
+2. Binary Search using `std::lower_bound()`
 ### C++ Template Argument Deduction
 #### Constness of data member variables of a const qualified class object
 ```C++

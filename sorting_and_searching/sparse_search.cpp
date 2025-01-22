@@ -6,10 +6,12 @@
 #include <iterator> // for std::ostream_iterator<>
 #include <optional> // for std::optional<>
 #include <vector> // for std::vector<>
+#include <chrono> // for timing
 
 // Requires for ""sv operator
 using namespace std::literals;
 
+// Solution no 1
 static std::optional<std::size_t> SparseSearch1(const std::span<const std::string_view> strs, const std::string_view searchStr)
 {
 	// Sort the list of strings lexicographically but retain their position info in the original array
@@ -26,6 +28,38 @@ static std::optional<std::size_t> SparseSearch1(const std::span<const std::strin
 	return { };
 }
 
+// Solution no 2 (faster than solution no 1)
+static std::optional<std::size_t> SparseSearch2(const std::span<const std::string_view> strs, std::size_t begin, std::size_t end, const std::string_view searchStr)
+{
+	while(begin < end)
+	{
+		auto mid = (end + begin) / 2;
+		auto str = strs[mid];
+		// If we hit an empty string then we aren't sure whether to go left or right
+		if(str.size() == 0)
+		{
+			// So first search the right half
+			auto result = SparseSearch2(strs, mid + 1, end, searchStr);
+			if(result) return result;
+			// Then search the left half
+			result = SparseSearch2(strs, begin, mid, searchStr);
+			return result;
+		}
+		if(str == searchStr)
+			return { mid };
+		else if(str < searchStr)
+			begin = mid + 1;
+		else // if(str > searchStr)
+			end = mid;
+	}
+	return { };
+}
+
+static std::optional<std::size_t> SparseSearch2(const std::span<const std::string_view> strs, const std::string_view searchStr)
+{
+	return SparseSearch2(strs, 0, strs.size(), searchStr);
+}
+
 struct Solution1
 {
 	std::optional<std::size_t> operator()(const std::span<const std::string_view> strs, const std::string_view searchStr)
@@ -34,14 +68,26 @@ struct Solution1
 	}
 };
 
+struct Solution2
+{
+	std::optional<std::size_t> operator()(const std::span<const std::string_view> strs, const std::string_view searchStr)
+	{
+		return SparseSearch2(strs, searchStr);
+	}
+};
+
 template<typename Sol>
 static void runSparseSearch(const std::span<const std::string_view> strs, const std::string_view searchStr)
 {
+	auto start = std::chrono::steady_clock::now();
 	std::optional<std::size_t> result = Sol { } (strs, searchStr);
+	auto end = std::chrono::steady_clock::now();
+	auto elapsed = std::chrono::duration_cast<std::chrono::duration<float, std::milli>>(end - start).count();
 	if(result)
 		std::cout << "Found at index: " << result.value() << "\n";
 	else
 		std::cout << "Not Found\n";
+	std::cout << "Time taken: " << elapsed << " ms\n";
 }
 
 template<template<typename> typename R, typename T>
@@ -64,7 +110,10 @@ static void run(const std::span<const std::string_view> strs, const std::string_
 {
 	std::cout << "Input: " << strs << "\n";
 	std::cout << "Search String: " << searchStr << "\n";
+	std::cout << "**Solution no 1**\n";
 	runSparseSearch<Solution1>(strs, searchStr);
+	std::cout << "**Solution no 2**\n";
+	runSparseSearch<Solution2>(strs, searchStr);
 }
 
 int main()

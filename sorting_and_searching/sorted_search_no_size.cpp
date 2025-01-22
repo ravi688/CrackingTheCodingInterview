@@ -5,6 +5,7 @@
 #include <initializer_list> // for std::intializer_list<>
 #include <optional> // for std::optional<>
 #include <algorithm> // for std::ranges::sort() and std::copy()
+#include <chrono> // for timing
 
 template<std::integral T>
 class no_size_vector
@@ -50,6 +51,7 @@ static std::ostream& operator<<(std::ostream& stream, const V<T>& v)
 	return stream;
 }
 
+// Solution no 1
 template<typename T>
 static std::optional<std::size_t> searchNoSize1(const no_size_vector<T>& v, const T& searchValue)
 {
@@ -84,6 +86,22 @@ static std::optional<std::size_t> searchNoSize1(const no_size_vector<T>& v, cons
 	return { };
 }
 
+// Solution no 2 (less efficient in general)
+template<typename T>
+static std::optional<T> searchNoSize2(const no_size_vector<T>& v, const T& searchValue)
+{
+	// Determine the lenth of the no size vector
+	std::size_t len = 0;
+	while(v[len] != -1) ++len;
+
+	// Perform the binary search
+	auto end = std::next(v.begin(), len);
+	auto it = std::lower_bound(v.begin(), end, searchValue);
+	if((it != end) && (*it == searchValue))
+		return { std::distance(v.begin(), it) };
+	return { };
+}
+
 struct Solution1
 {
 	template<typename T>
@@ -93,14 +111,27 @@ struct Solution1
 	}
 };
 
+struct Solution2
+{
+	template<typename T>
+	std::optional<std::size_t> operator()(const no_size_vector<T>& v, const T& searchValue)
+	{
+		return searchNoSize2(v, searchValue);
+	}
+};
+
 template<typename Sol, typename T>
 static void runSearch(const no_size_vector<T>& v, const T& searchValue)
 {
+	auto start = std::chrono::steady_clock::now();
 	std::optional<std::size_t> result = Sol { } (v, searchValue);
+	auto end = std::chrono::steady_clock::now();
+	auto elapsed = std::chrono::duration_cast<std::chrono::duration<float, std::milli>>(end - start).count();
 	if(result)
 		std::cout << "Found at index: " << result.value() << "\n";
 	else
 		std::cout << "Not Found\n";
+	std::cout << "Time taken: " << elapsed << " ms\n";
 }
 
 template<typename T>
@@ -110,6 +141,8 @@ static void run(const no_size_vector<T>& v, const T& searchValue)
 	std::cout << "Search Value: " << searchValue << "\n";
 	std::cout << "**Solution no 1**\n";
 	runSearch<Solution1>(v, searchValue);
+	std::cout << "**Solution no 2**\n";
+	runSearch<Solution2>(v, searchValue);
 }
 
 int main()

@@ -42,6 +42,7 @@ Coding Practice for my Job interviews and personal learnings
  - Generating all possible ways of evaluating (associating operands to operators) a given boolean expression such that the result is equal to a given value { using Recursion }
  - Finding an element in a sorted then rotated array using Recursion method and Iterative method
  - Finding an element in a sorted array with no given size, instead it returns -1 if index is out of range { using Binary Methods }
+ - Finding a string in a sorted array of strings containing empty strings intersparsed { using Binary Methods, Recursion }
 ### Numerical Algorithms
  - Finding Stationary Points using Gradient Descend
  - Finding Roots using Tangent Descend or Newton Raphson Method

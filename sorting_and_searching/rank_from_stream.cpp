@@ -1,7 +1,8 @@
 #include <iostream>
 #include <optional> // for std::optional<>
-#include <set> // for std::set<>
+#include <set> // for std::multiset<>
 #include <vector> // for std::vector<>
+#include <unordered_map> // for std::unordered_multimap<>
 #include <span> // for std::span<>
 #include <algorithm> // for std::for_each
 #include <chrono> // for timing
@@ -40,7 +41,7 @@ class Solution1 : public ITracker<T>
 template<typename T>
 class Solution2 : public ITracker<T>
 {
-	private:
+	protected:
 		using RankData = std::pair<T, std::size_t>;
 		std::vector<RankData> m_data;
 	public:
@@ -67,6 +68,28 @@ class Solution2 : public ITracker<T>
 			if(it == m_data.end())
 				return { };
 			return { it->second };
+		}
+};
+
+template<typename T>
+class Solution3 : public Solution2<T>
+{
+	private:
+		std::unordered_multimap<T, std::size_t> m_lookupTable;
+	public:
+		// Time complexity: Linear
+		virtual void track(const T& value) noexcept override
+		{
+			Solution2<T>::track(value);
+			m_lookupTable.insert({ value, Solution2<T>::m_data.size() - 1 });
+		}
+		// Time complexity: Constant
+		virtual std::optional<std::size_t> getRankOfNumber(const T& value) noexcept override
+		{
+			auto it = m_lookupTable.find(value);
+			if(it == m_lookupTable.end())
+				return { };
+			return Solution2<T>::m_data[it->second].second;
 		}
 };
 
@@ -118,6 +141,8 @@ static void run(const std::span<T> values)
 	runRankFromStream<Solution1, T>(values);
 	std::cout << "**Solution no 2**\n";
 	runRankFromStream<Solution2, T>(values);
+	std::cout << "**Solution no 3**\n";
+	runRankFromStream<Solution3, T>(values);
 }
 
 int main()

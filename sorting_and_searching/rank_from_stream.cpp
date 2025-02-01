@@ -4,6 +4,7 @@
 #include <vector> // for std::vector<>
 #include <span> // for std::span<>
 #include <algorithm> // for std::for_each
+#include <chrono> // for timing
 
 // Tracker interface
 template<typename T>
@@ -43,6 +44,7 @@ class Solution2 : public ITracker<T>
 		using RankData = std::pair<T, std::size_t>;
 		std::vector<RankData> m_data;
 	public:
+		// Time complexity: Linear
 		virtual void track(const T& value) noexcept override
 		{
 			std::size_t thisRank = 0;
@@ -58,6 +60,7 @@ class Solution2 : public ITracker<T>
 				}
 			m_data.push_back({ value, thisRank });
 		}
+		// Time complexity: Linear
 		virtual std::optional<std::size_t> getRankOfNumber(const T& value) noexcept override
 		{
 			auto it = std::ranges::find_if(m_data, [&](const auto& _value) noexcept { return _value.first == value; });
@@ -81,16 +84,31 @@ template<template<typename> typename Sol, typename T>
 static void runRankFromStream(const std::span<T> values)
 {
 	Sol<T> sol;
+	float averageTrackTime = 0;
+	float averageGetRankTime = 0;
 	for(std::size_t i = 0; const auto& value : values)
 	{
+		std::chrono::steady_clock::time_point start = std::chrono::steady_clock::now();
 		sol.track(value);
+		std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
+		auto elapsed = std::chrono::duration_cast<std::chrono::duration<float, std::milli>>(end - start).count();
+		averageTrackTime += elapsed;
 		++i;
-		std::for_each(values.begin(), std::next(values.begin(), i), [&sol](const auto& value)
+		std::for_each(values.begin(), std::next(values.begin(), i), [&sol, &averageGetRankTime](const auto& value)
 		{
-			std::cout << "{ " << value << ", " << sol.getRankOfNumber(value) << " }, ";
+			auto start = std::chrono::steady_clock::now();
+			auto rank = sol.getRankOfNumber(value);
+			auto end = std::chrono::steady_clock::now();
+			auto elapsed = std::chrono::duration_cast<std::chrono::duration<float, std::milli>>(end - start).count();
+			averageGetRankTime += elapsed;
+			std::cout << "{ " << value << ", " << rank << " }, ";
 		});
 		std::cout << "\n";
 	}
+	averageTrackTime /= values.size();
+	std::cout << "Average time taken by track(): " << averageTrackTime << " ms\n";
+	averageGetRankTime /= (values.size() * (values.size() + 1) / 2.0f);
+	std::cout << "Average time taken by getRankOfNumber(): " << averageGetRankTime << " ms\n";
 }
 
 template<typename T>

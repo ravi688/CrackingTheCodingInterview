@@ -104,7 +104,10 @@ class RankBSTNode
 {
 	private:
 		T m_value;
+		// Number of duplicates of this nodes including itself
 		std::size_t m_duplicateCount { 1 };
+		// Number of nodes in its subtree including itself
+		std::size_t m_count { 1 };
 		RankBSTNode<T>* m_left { };
 		RankBSTNode<T>* m_right { };
 	public:
@@ -114,6 +117,7 @@ class RankBSTNode
 		std::size_t getDuplicateCount() const noexcept { return m_duplicateCount; }
 		T& getValue() noexcept { return m_value; }
 		const T& getValue() const noexcept { return m_value; }
+		std::size_t getCount() const noexcept { return m_count; }
 		RankBSTNode<T>* createLeft(const T& value)
 		{
 			m_left = new RankBSTNode<T>(value);
@@ -126,6 +130,7 @@ class RankBSTNode
 		}
 		RankBSTNode<T>* add(const T& value, std::size_t dupCount = 1)
 		{
+			m_count += 1;
 			if(m_value <= value)
 			{
 				if(m_value == value)
@@ -150,6 +155,19 @@ class RankBSTNode
 				if(!m_right->inorderTraverse(visitor))
 					return false;
 			return true;
+		}
+		std::optional<std::size_t> getRank(const T& value) const
+		{
+			if(m_value == value)
+				return { (m_left ? m_left->getCount() : 0) + m_duplicateCount - 1 };
+			if(m_value > value)
+			{
+				if(m_left)
+					return m_left->getRank(value);
+				return { };
+			}
+			// else if m_value < value
+			return { (m_left ? m_left->getCount() : 0) + 1 + (m_right ? m_right->getRank(value).value_or(0) : 0) };
 		}
 };
 
@@ -202,6 +220,11 @@ class RankBST
 			if(!foundNode) return { };
 			return { rank + foundNode->getDuplicateCount() - 1 };
 		}
+		std::optional<std::size_t> getRank2(const T& value)
+		{
+			if(!m_root) return { };
+			return m_root->getRank(value);
+		}
 };
 
 template<typename T>
@@ -210,13 +233,34 @@ class Solution4 : public ITracker<T>
 	private:
 		RankBST<T> m_rankBST;
 	public:
+		// Time Complexity: Logarithmic
 		virtual void track(const T& value) noexcept override
 		{
 			m_rankBST.add(value);
 		}
+		// Time Complexity: Linear
 		virtual std::optional<std::size_t> getRankOfNumber(const T& value) noexcept override
 		{
 			return m_rankBST.getRank(value);
+		}
+};
+
+// Most efficient as it has both the track() and getRankOfNumber() in logarithmic time complexity.
+template<typename T>
+class Solution5 : public ITracker<T>
+{
+	private:
+		RankBST<T> m_rankBST;
+	public:
+		// Time Complexity: Logarithmic
+		virtual void track(const T& value) noexcept override
+		{
+			m_rankBST.add(value);
+		}
+		// Time Complexity: Logarithmic
+		virtual std::optional<std::size_t> getRankOfNumber(const T& value) noexcept override
+		{
+			return m_rankBST.getRank2(value);
 		}
 };
 
@@ -272,6 +316,8 @@ static void run(const std::span<T> values)
 	runRankFromStream<Solution3, T>(values);
 	std::cout << "**Solution no 4**\n";
 	runRankFromStream<Solution4, T>(values);
+	std::cout << "**Solution no 5**\n";
+	runRankFromStream<Solution5, T>(values);
 }
 
 int main()

@@ -93,6 +93,133 @@ class Solution3 : public Solution2<T>
 		}
 };
 
+template<typename V, typename T>
+concept VisitorPred = requires(V& callable, T& value)
+{
+	{ callable(value) } -> std::convertible_to<bool>;
+};
+
+template<typename T>
+class RankBSTNode
+{
+	private:
+		T m_value;
+		std::size_t m_duplicateCount { 1 };
+		RankBSTNode<T>* m_left { };
+		RankBSTNode<T>* m_right { };
+	public:
+		RankBSTNode(const T& value, std::size_t dupCount = 1) : m_value(value), m_duplicateCount(dupCount) { }
+		RankBSTNode<T>* getLeft() noexcept { return m_left; }
+		RankBSTNode<T>* getRight() noexcept { return m_right; }
+		std::size_t getDuplicateCount() const noexcept { return m_duplicateCount; }
+		T& getValue() noexcept { return m_value; }
+		const T& getValue() const noexcept { return m_value; }
+		RankBSTNode<T>* createLeft(const T& value)
+		{
+			m_left = new RankBSTNode<T>(value);
+			return m_left;
+		}
+		RankBSTNode<T>* createRight(const T& value, std::size_t dupCount = 1)
+		{
+			m_right = new RankBSTNode<T>(value, dupCount);
+			return m_right;
+		}
+		RankBSTNode<T>* add(const T& value, std::size_t dupCount = 1)
+		{
+			if(m_value <= value)
+			{
+				if(m_value == value)
+				{
+					m_duplicateCount += 1;
+					dupCount += 1;
+				}
+				return m_right ? m_right->add(value, dupCount) : createRight(value, dupCount);
+			}
+			else // if m_value > value
+				return m_left ? m_left->add(value) : createLeft(value);
+		}
+		template<VisitorPred<RankBSTNode<T>*> V>
+		bool inorderTraverse(const V& visitor)
+		{
+			if(m_left)
+				if(!m_left->inorderTraverse(visitor))
+					return false;
+			if(!visitor(this))
+				return false;
+			if(m_right)
+				if(!m_right->inorderTraverse(visitor))
+					return false;
+			return true;
+		}
+};
+
+template<typename T>
+class RankBST
+{
+	public:
+		using node_type = RankBSTNode<T>;
+	private:
+		RankBSTNode<T>* m_root { };
+		static void deleteNodeRecursive(RankBSTNode<T>* node)
+		{
+			if(!node) return;
+			deleteNodeRecursive(node->getLeft());
+			deleteNodeRecursive(node->getRight());
+			delete node;
+		}
+	public:
+		~RankBST()
+		{
+			deleteNodeRecursive(m_root);
+		}
+		void add(const T& value)
+		{
+			if(!m_root)
+			{
+				m_root = new RankBSTNode<T>(value);
+				return;
+			}
+			m_root->add(value);
+		}
+		std::optional<std::size_t> getRank(const T& value)
+		{
+			std::size_t rank = 0;
+			bool isFound = false;
+			typename RankBST<T>::node_type* foundNode = nullptr;
+			m_root->inorderTraverse([&rank, &foundNode, &value](const auto& node)
+			{
+				const auto& _value = node->getValue();
+				if(_value < value)
+					++rank;
+				else // if _value >= value
+				{
+					if(_value == value)
+						foundNode = node;
+					return false;
+				}
+				return true;
+			});
+			if(!foundNode) return { };
+			return { rank + foundNode->getDuplicateCount() - 1 };
+		}
+};
+
+template<typename T>
+class Solution4 : public ITracker<T>
+{
+	private:
+		RankBST<T> m_rankBST;
+	public:
+		virtual void track(const T& value) noexcept override
+		{
+			m_rankBST.add(value);
+		}
+		virtual std::optional<std::size_t> getRankOfNumber(const T& value) noexcept override
+		{
+			return m_rankBST.getRank(value);
+		}
+};
+
 template<typename T>
 static std::ostream& operator<<(std::ostream& stream, const std::optional<T>& value)
 {
@@ -143,6 +270,8 @@ static void run(const std::span<T> values)
 	runRankFromStream<Solution2, T>(values);
 	std::cout << "**Solution no 3**\n";
 	runRankFromStream<Solution3, T>(values);
+	std::cout << "**Solution no 4**\n";
+	runRankFromStream<Solution4, T>(values);
 }
 
 int main()

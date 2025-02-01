@@ -43,6 +43,9 @@ Coding Practice for my Job interviews and personal learnings
  - Finding an element in a sorted then rotated array using Recursion method and Iterative method
  - Finding an element in a sorted array with no given size, instead it returns -1 if index is out of range { using Binary Methods }
  - Finding a string in a sorted array of strings containing empty strings intersparsed { using Binary Methods, Recursion }
+ - Finding an element in a matrix with sorted rows and columns { using Binary Search Methods }
+ - Calculating ranks of elements in a stream of integers (incremental) { using Binary Search Tree and Linear methods }
+ - Converting an integer arrray into another array with peaks and valleys in alternating manner
 ### Numerical Algorithms
  - Finding Stationary Points using Gradient Descend
  - Finding Roots using Tangent Descend or Newton Raphson Method

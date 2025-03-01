@@ -281,6 +281,8 @@ void myFunction(T* myPtr) { }
 myFunction(nullptr) // no matching call because of substitution failure
 myFunction(static_cast<SomeType*>(nullptr)) // OK
 ```
+#### Use the following gcc flags
+-Wall -Wextra -pedantic -fanalyzer.
 
 ### Insightful lessons from very experienced Software Engineers and Scientists
 #### "Simplicity is the prerequisite to reliability"

@@ -129,7 +129,7 @@ static void function()
 	// And std::is_const<int * const>::value or std::is_const<const int* const>::value would evaluate to true
 }
 ```
-#### Just including <iostream> may lead to heap memory allocations
+#### Just including \<iostream\> may lead to heap memory allocations
 ```cpp
 // file myfile.cpp
 #include <iostream>

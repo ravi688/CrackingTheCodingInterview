@@ -129,6 +129,21 @@ static void function()
 	// And std::is_const<int * const>::value or std::is_const<const int* const>::value would evaluate to true
 }
 ```
+#### Just including <iostream> may lead to heap memory allocations
+```cpp
+// file myfile.cpp
+#include <iostream>
+int main() { }
+```
+Compiling this with the following command:
+```
+$ g++ -std=c++20 -O0 -Wall -Wpedantic -Wextra myfile.cpp -o ./main
+```
+And running the executable under valgrind:
+```
+$ valgrind --tool=memcehck ./main
+```
+Would print 1 heap allocation and 1 free.
 
 ### C++ Software Engineering
 #### Use Warnings

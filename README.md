@@ -145,6 +145,21 @@ $ valgrind --tool=memcehck ./main
 ```
 Would print 1 heap allocation and 1 free.
 
+#### Nasty errors when the format string passed to std::format() is not qualified with constexpr
+The following code would lead to compile errors as std::format() is consteval function and it expects its format string parameter to be marked as constexpr
+```cpp
+std::string_view formatStr = ...;
+... = std::format(formatStr, ...)
+```
+Correct code:
+```cpp
+constexpr std::string_view formatStr = ...;
+... = std::format(formatStr, ...)
+```
+> [!Note]
+> When using non-constexpr format strings in template contexts, it might lead to hard to diagnose compile error, and the error message might be very complicated to understand. <br>
+> It is also recommended to use clang along with gcc as different compilers produce different error outputs with different details.
+
 ### C++ Software Engineering
 #### Use Warnings
 gcc -Wall -Wextra -Wpedantic main.cpp -o ./main <br>

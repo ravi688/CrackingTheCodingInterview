@@ -12,6 +12,8 @@ Coding Practice for my Job interviews and personal learnings
  - TLB
  - Memory Orderings
  - Bus Faults (unaligned accesses)
+### Multi-threading concepts
+Here: https://github.com/ravi688/CrackingTheCodingInterview/blob/main/cia/README.md
 ### Algorithms, and Data Structures
  - Compression and Decompression using Huffman Coding
  - Nqueens problem

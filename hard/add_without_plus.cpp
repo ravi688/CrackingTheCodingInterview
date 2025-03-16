@@ -26,26 +26,50 @@ static T GetInput(std::string_view promptMessage)
 	return dest;
 }
 
-template<std::integral T>
-static decltype(auto) AddWithoutPlus(const T& a, const T& b)
+// Tags
+struct Solution1 { };
+struct Solution2 { };
+
+template<typename Selection>
+struct AddWithoutPlus { };
+
+template<>
+struct AddWithoutPlus<Solution1>
 {
-	constexpr std::size_t numBits = sizeof(T) << 3;
-	T carryBit = 0;
-	T result = 0;
-	for(std::size_t i = 0; i < numBits; ++i)
+	template<std::integral T>
+	decltype(auto) operator()(const T& a, const T& b)
 	{
-		auto aBit = a & (static_cast<T>(1) << i);
-		auto bBit = b & (static_cast<T>(1) << i);
-		aBit >>= i;
-		bBit >>= i;
-		auto cBit = aBit ^ bBit;
-		auto oldCarryBit = carryBit;
-		carryBit = (aBit & bBit) | (cBit & carryBit);
-		cBit ^= oldCarryBit;
-		result |= (cBit << i);
+		constexpr std::size_t numBits = sizeof(T) << 3;
+		T carryBit = 0;
+		T result = 0;
+		for(std::size_t i = 0; i < numBits; ++i)
+		{
+			auto aBit = a & (static_cast<T>(1) << i);
+			auto bBit = b & (static_cast<T>(1) << i);
+			aBit >>= i;
+			bBit >>= i;
+			auto cBit = aBit ^ bBit;
+			auto oldCarryBit = carryBit;
+			carryBit = (aBit & bBit) | (cBit & carryBit);
+			cBit ^= oldCarryBit;
+			result |= (cBit << i);
+		}
+		return result;
 	}
-	return result;
-}
+};
+
+template<>
+struct AddWithoutPlus<Solution2>
+{
+	template<std::integral T>
+	decltype(auto) operator()(T a, T b)
+	{
+		if(b == 0) return a;
+		auto sum = a ^ b;
+		auto carry = (a & b) << 1;
+		return AddWithoutPlus<Solution2>{}(sum, carry);
+	}
+};
 
 template<std::integral T>
 static void Verify(const T result, const T a, const T b)
@@ -54,6 +78,7 @@ static void Verify(const T result, const T a, const T b)
 	assert(result == refResult);
 }
 
+template<typename Selection>
 static void RunTests()
 {
 	std::srand(std::time(0));
@@ -61,7 +86,7 @@ static void RunTests()
 	{
 		long long int a = std::rand();
 		long long int b = std::rand();
-		auto result = AddWithoutPlus(a, b);
+		auto result = AddWithoutPlus<Selection>{}(a, b);
 		Verify(result, a, b);
 	}
 	std::cout << "All tests passed\n";
@@ -69,10 +94,14 @@ static void RunTests()
 
 int main()
 {
-	RunTests();
+	RunTests<Solution1>();
+	RunTests<Solution2>();
 	long long int a = GetInput<long long int>("Please enter first integer: ");
 	long long int b = GetInput<long long int>("Please enter second integer: ");
-	auto result = AddWithoutPlus(a, b);
-	std::cout << std::format("{} + {} = {}", a, b, result) << "\n";
+	auto result = AddWithoutPlus<Solution1>{}(a, b);
+	std::cout << "Solution 1: " << std::format("{} + {} = {}", a, b, result) << "\n";
+	Verify(result, a, b);
+	result = AddWithoutPlus<Solution2>{}(a, b);
+	std::cout << "Solution 2: " << std::format("{} + {} = {}", a, b, result) << "\n";
 	Verify(result, a, b);
 }

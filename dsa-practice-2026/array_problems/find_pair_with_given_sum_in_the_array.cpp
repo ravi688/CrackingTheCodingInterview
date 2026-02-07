@@ -43,6 +43,29 @@ std::optional<std::pair<int, int>> find_pair_2(std::span<const int> arr, const i
 	return { };
 }
 
+// Time complexity: O(n * log(n) + n) = O(n * log(n)), more efficient than the solution no 2
+// Space complexity: O(n)
+std::optional<std::pair<int, int>> find_pair_3(std::span<const int> arr, const int sum)
+{
+	std::vector sortedArr(arr.cbegin(), arr.cend());
+	std::sort(sortedArr.begin(), sortedArr.end(), std::less { });
+
+	std::size_t low = 0;
+	std::size_t high = arr.size() - 1;
+
+	while(low < high)
+	{
+		auto _sum = sortedArr[low] + sortedArr[high];
+		if(_sum == sum)
+			return { { sortedArr[low], sortedArr[high] } };
+		if(_sum > sum)
+			--high;
+		else
+			++low;
+	}
+	return { };
+}
+
 void print_problem(std::span<const int> arr, const int sum)
 {
 	std::cout << "Input Array: ";
@@ -67,6 +90,13 @@ int main(const int argc, const char** argv)
 
 	std::cout << "--- Solution no 2 ----- " << std::endl;
 	foundPair = find_pair_2(inputArray, givenSum);
+	if(foundPair)
+		std::cout << "Pair has been found: (" << foundPair->first << ", " << foundPair->second << ")" << std::endl;
+	else
+		std::cout << "Pair has not been found" << std::endl;
+
+	std::cout << "--- Solution no 3 ----- " << std::endl;
+	foundPair = find_pair_3(inputArray, givenSum);
 	if(foundPair)
 		std::cout << "Pair has been found: (" << foundPair->first << ", " << foundPair->second << ")" << std::endl;
 	else

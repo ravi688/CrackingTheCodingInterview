@@ -5,7 +5,7 @@
 #include <algorithm> // for std::copy()
 #include <iterator> // for std::ostream_iterator<>
 #include <vector> // for std::vector<>
-
+#include <unordered_map> // for std::unordered_map<>
 #include <cassert> // for assert()
 
 // Time complexity: O(n * (n + 1) / 2 ) = O(n^2)
@@ -66,6 +66,22 @@ std::optional<std::pair<int, int>> find_pair_3(std::span<const int> arr, const i
 	return { };
 }
 
+// Time complexity: O(n)
+// Space complexity: O(n) = equivalent to the space complexity of std::unordered_map
+std::optional<std::pair<int, int>> find_pair_4(std::span<const int> arr, const int sum)
+{
+	std::unordered_map<int, int> hm;
+	for(std::size_t i = 0; i < arr.size(); ++i)
+	{
+		if(hm.find(sum - arr[i]) != hm.end())
+		{
+			return { { arr[i], sum - arr[i] } };
+		}
+		hm[arr[i]] = i;
+	}
+	return { };
+}
+
 void print_problem(std::span<const int> arr, const int sum)
 {
 	std::cout << "Input Array: ";
@@ -102,5 +118,11 @@ int main(const int argc, const char** argv)
 	else
 		std::cout << "Pair has not been found" << std::endl;
 
+	std::cout << "--- Solution no 4 ----- " << std::endl;
+	foundPair = find_pair_4(inputArray, givenSum);
+	if(foundPair)
+		std::cout << "Pair has been found: (" << foundPair->first << ", " << foundPair->second << ")" << std::endl;
+	else
+		std::cout << "Pair has not been found" << std::endl;
 	return 0;
 }

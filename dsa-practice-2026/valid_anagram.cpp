@@ -61,6 +61,9 @@ bool isValidAnagram2(const std::string& s1, const std::string& s2)
 	return true;
 }
 
+// Solution no 3: Using fixed sized hash table
+// Time complexity: O(n + m), where n = len(s1), m = len(s2)
+// Space complexity: O(1)
 bool isValidAnagram3(const std::string& s1, const std::string& s2)
 {
 	if(s1.size() != s2.size())

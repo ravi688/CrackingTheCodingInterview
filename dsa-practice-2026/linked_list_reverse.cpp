@@ -46,6 +46,9 @@ void printLL(const LLNode* node)
 	std::cout << "\n";
 }
 
+// Solution no 1: Iteratively reverse the nodes
+// Time complexity: O(n)
+// Space complexity: O(1)
 LLNode* reverseLL(LLNode* node)
 {
 	// n1 -> n2 -> n3
@@ -63,12 +66,31 @@ LLNode* reverseLL(LLNode* node)
 	return head;
 }
 
+// Solution no 2: Recursively reverse the sub-list
+// Time complexity: O(n)
+// Space complexity: O(n)
+LLNode* reverseLLRecursive(LLNode* node)
+{
+	if(node == nullptr || node->next == nullptr)
+		return node;
+	LLNode* head = reverseLLRecursive(node->next);
+	node->next->next = node;
+	node->next = nullptr;
+	return head;
+}
+
 int main(int argc, const char** argv)
 {
 	auto* ll = createLL({ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 });
 	std::cout << "Given linked list: ";
 	printLL(ll);
+	std::cout << "**------------Solution no 1------------**\n";
 	ll = reverseLL(ll);
+	std::cout << "Reversed linked list: ";
+	printLL(ll);
+	std::cout << "**------------Solution no 2------------**\n";
+	ll = reverseLL(ll);
+	ll = reverseLLRecursive(ll);
 	std::cout << "Reversed linked list: ";
 	printLL(ll);
 

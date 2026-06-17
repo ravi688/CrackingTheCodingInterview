@@ -3,6 +3,8 @@
 #include <cstdlib>
 #include <iterator>
 #include <limits>
+#include <algorithm> // for std::ranges::sort
+#include <chrono>
 
 #define ERROR(desc) do { std::cerr << desc << "\n"; exit(EXIT_FAILURE); } while(false)
 
@@ -81,16 +83,42 @@ std::ostream& operator<<(std::ostream& stream, const std::vector<T>& v)
 int CalculateMinimumDifference(const std::vector<int>& heights, const int k)
 {
 	std::vector<int> v { heights };
+	auto startTime = std::chrono::steady_clock::now();
 	int minDiff = std::numeric_limits<int>::max();
 	traverseSubset(v, 0, k, [&minDiff](const std::vector<int>& v) {
-			std::cout << "subset: " << v << "\n";
+			//std::cout << "subset: " << v << "\n";
 			auto [min, max] = getMinMax(v);
 			auto diff = max - min;
 			if(diff < minDiff)
 				minDiff = diff;
 	});
-
+	auto endTime = std::chrono::steady_clock::now();
+	float timeElapsed = std::chrono::duration_cast<std::chrono::duration<float, std::ratio<1, 1000000>>>(endTime - startTime).count();
+	std::cout << "Time taken: " << timeElapsed << " us" << "\n";
 	return minDiff;
+}
+
+int CalculateMinimumDifference2(const std::vector<int>& heights, const int k)
+{
+	std::vector<int> sortedHeights { heights };
+	std::ranges::sort(sortedHeights, std::less { });
+	std::cout << "Sorted heights: " << sortedHeights << "\n";
+
+	std::size_t n = heights.size();
+	int ans = heights[n - 1] - heights[0];
+
+	for(std::size_t i = 0; i < (n - 1); ++i)
+	{
+		if((heights[i + 1] - k) < 0)
+			continue;
+
+		int smallest = std::min(heights[0] + k, heights[i + 1] - k);
+		int largest = std::max(heights[i] + k, heights[n - 1] - k);
+
+		ans = std::min(ans, largest - smallest);
+	}
+
+	return ans;
 }
 
 int main(int argc, const char** argv)
@@ -98,7 +126,11 @@ int main(int argc, const char** argv)
 	Input input = ParseInput(argc, argv);
 	std::cout << "Heights: " << input.heights << "\n";
 	std::cout << "K: " << input.k << "\n";
+	std::cout << "**---------- Solution no 1 ---------------***\n";
 	int output = CalculateMinimumDifference(input.heights, input.k);
+	std::cout << "Output: " << output << std::endl;
+	std::cout << "**---------- Solution no 2 ---------------***\n";
+	output = CalculateMinimumDifference2(input.heights, input.k);
 	std::cout << "Output: " << output << std::endl;
 	return 0;
 }

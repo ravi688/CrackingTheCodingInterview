@@ -74,10 +74,13 @@ binary_node_t* binary_node_create_right(binary_node_t* node, void* satellite_dat
 
 binary_node_t* binary_node_set_left(binary_node_t* node, binary_node_t* left)
 {
+	// unlink the node with its parent first if parent exists
 	if(left->parent != NULL)
 	{
+		// if it is on the left of its parent
 		if(left->parent->left == left)
 			left->parent->left = NULL;
+		// if it is on the right of its parent
 		else if(left->parent->right == left)
 			left->parent->right = NULL;
 	}
@@ -88,10 +91,13 @@ binary_node_t* binary_node_set_left(binary_node_t* node, binary_node_t* left)
 
 binary_node_t* binary_node_set_right(binary_node_t* node, binary_node_t* right)
 { 
+	// unlink the node with its parent first if parent exists
 	if(right->parent != NULL)
 	{
+		// if it is on the left of its parent
 		if(right->parent->left == right)
 			right->parent->left = NULL;
+		// if it is on the right of its parent
 		else if(right->parent->right == right)
 			right->parent->right = NULL;
 	}
@@ -166,6 +172,7 @@ void binary_node_traverse_inorder(binary_node_t* node, void (*callback)(binary_n
  		binary_node_traverse_inorder(right, callback, userData);
 }
 
+// Binary tree cloning using Post-order traversal, i.e. left, right, and root
 binary_node_t* binary_node_clone(binary_node_t* node, void* (*data_clone_callback)(binary_node_t* node, void* userData), void* userData)
 {
 	binary_node_t* left = binary_node_get_left(node);
@@ -178,6 +185,26 @@ binary_node_t* binary_node_clone(binary_node_t* node, void* (*data_clone_callbac
 		clone_right = binary_node_clone(right, data_clone_callback, userData);
 	void* clone_data = (data_clone_callback == NULL) ? binary_node_get_satellite_data(node) : data_clone_callback(node, userData);
 	return binary_node_create(clone_data, clone_left, clone_right);
+}
+
+// Binary tree cloning using Pre-order traversal, i.e. root, left, and right
+binary_node_t* binary_node_clone2(binary_node_t* node, void* (*data_clone_callback)(binary_node_t* node, void* userData), void* userData)
+{
+	void* clone_data = (data_clone_callback == NULL) ? binary_node_get_satellite_data(node) : data_clone_callback(node, userData);
+	binary_node_t* c_node = binary_node_create(clone_data, NULL, NULL);
+	binary_node_t* left_node = binary_node_get_left(node);
+	if(left_node != NULL)
+	{
+		binary_node_t* c_left_node = binary_node_clone2(left_node, data_clone_callback, userData);
+		binary_node_set_left(c_node, c_left_node);
+	}
+	binary_node_t* right_node = binary_node_get_right(node);
+	if(right_node != NULL)
+	{
+		binary_node_t* c_right_node = binary_node_clone2(right_node, data_clone_callback, userData);
+		binary_node_set_right(c_node, c_right_node);
+	}
+	return c_node;
 }
 
 void binary_node_traverse_inorder2(binary_node_t* node, void (*callback)(binary_node_t* node, void* userData), void* userData)

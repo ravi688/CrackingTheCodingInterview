@@ -82,8 +82,10 @@ int main(const char* argv[], int arg)
 	printf("PreOrder: "); binary_node_traverse_preorder(tree, TRAVERSE_CALLBACK(print_node_as_int), NULL); puts("");
 	printf("InOrder: "); binary_node_traverse_inorder(tree, TRAVERSE_CALLBACK(print_node_as_int), NULL); puts("");
 	binary_tree_t* clone_tree = binary_node_clone(tree, DATA_CLONE_CALLBACK(clone_int), NULL);
-	printf("InOrder2: "); binary_node_traverse_inorder2(tree, TRAVERSE_CALLBACK(print_node_as_int), NULL); puts("");
+	printf("InOrder2: "); binary_node_traverse_inorder(tree, TRAVERSE_CALLBACK(print_node_as_int), NULL); puts("");
 	binary_tree_destroy(clone_tree, DESTROY_CALLBACK(destroy_int), NULL);
+	binary_tree_t* clone_tree_2 = binary_node_clone2(tree, DATA_CLONE_CALLBACK(clone_int), NULL);
+	printf("InOrder3: "); binary_node_traverse_inorder(clone_tree_2, TRAVERSE_CALLBACK(print_node_as_int), NULL); puts("");
 	printf("PostOrder: "); binary_node_traverse_postorder(tree, TRAVERSE_CALLBACK(print_node_as_int), NULL); puts("");
 	binary_tree_destroy(tree, DESTROY_CALLBACK(destroy_int), NULL);
 

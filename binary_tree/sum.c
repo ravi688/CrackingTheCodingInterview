@@ -139,7 +139,7 @@ int main(const char* argv[], int arg)
 	while((tree != NULL) && (binary_tree_get_count(tree) > 0))
 	{
 		search_value = array[i++];
-		if(binary_search_tree_remove(tree, &search_value, COMPARE_CALLBACK(compare_ints), NULL, DESTROY_CALLBACK(destroy_int), NULL, &tree))
+		if(binary_search_tree_remove2(tree, &search_value, COMPARE_CALLBACK(compare_ints), NULL, DESTROY_CALLBACK(destroy_int), NULL, DATA_CLONE_CALLBACK(clone_int), NULL, &tree))
 		{
 			printf("Removal of %d from BST is success\n", search_value);
 		}

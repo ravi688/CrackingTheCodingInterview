@@ -75,7 +75,7 @@ binary_node_t* binary_node_create_right(binary_node_t* node, void* satellite_dat
 binary_node_t* binary_node_set_left(binary_node_t* node, binary_node_t* left)
 {
 	// unlink the node with its parent first if parent exists
-	if(left->parent != NULL)
+	if(left != NULL && left->parent != NULL)
 	{
 		// if it is on the left of its parent
 		if(left->parent->left == left)
@@ -85,14 +85,15 @@ binary_node_t* binary_node_set_left(binary_node_t* node, binary_node_t* left)
 			left->parent->right = NULL;
 	}
 	node->left = left; 
-	left->parent = node;
+	if(left != NULL)
+		left->parent = node;
 	return left; 
 }
 
 binary_node_t* binary_node_set_right(binary_node_t* node, binary_node_t* right)
 { 
 	// unlink the node with its parent first if parent exists
-	if(right->parent != NULL)
+	if(right != NULL && right->parent != NULL)
 	{
 		// if it is on the left of its parent
 		if(right->parent->left == right)
@@ -102,7 +103,8 @@ binary_node_t* binary_node_set_right(binary_node_t* node, binary_node_t* right)
 			right->parent->right = NULL;
 	}
 	node->right = right; 
-	right->parent = node; 
+	if(right != NULL)
+		right->parent = node; 
 	return right; 
 }
 
@@ -913,6 +915,76 @@ bool binary_search_tree_remove(binary_tree_t* tree, void* value, comparer_t comp
 		return true;
 	}
 	return false;
+}
+
+static bool binary_node_has_right(binary_node_t* node) { return node->right != NULL; }
+static bool binary_node_has_left(binary_node_t* node) { return node->left != NULL; }
+
+// Recursive implementation for node removal from a binary search tree
+binary_node_t* remove_node(binary_tree_t* tree, void* value, comparer_t compare_callback, void* userData1, void (*destroyCallback)(binary_node_t*, void*), void* userData2,
+		void* (*copyCallback)(binary_node_t*, void*), void* userData3)
+{
+	if(tree == NULL)
+		return NULL;
+
+	void* data = binary_node_get_satellite_data(tree);
+	int result = compare_callback(value, data, userData1);
+	if(result < 0)
+	{
+		binary_node_t* left = remove_node(tree->left, value, compare_callback, userData1, destroyCallback, userData2, copyCallback, userData3);
+		binary_node_set_left(tree, left);
+	}
+	else if(result > 0)
+	{
+		binary_node_t* right = remove_node(tree->right, value, compare_callback, userData2, destroyCallback, userData2, copyCallback, userData3);
+		binary_node_set_right(tree, right);
+	}
+	else
+	{
+		//    A
+		//  /   \
+		// NIL    B
+		if(!binary_node_has_left(tree))
+		{
+			binary_node_t* temp = binary_node_get_right(tree);
+			binary_node_destroy(tree, destroyCallback, userData2);
+			return temp;
+		}
+
+		//    A
+		//  /   \
+		// B    NIL
+		if(!binary_node_has_right(tree))
+		{
+			binary_node_t* temp = binary_node_get_left(tree);
+			binary_node_destroy(tree, destroyCallback, userData2);
+			return temp;
+		}
+
+		binary_node_t* succ = binary_node_get_left_most(tree->right);
+		void* copy_succ_data = copyCallback(succ, userData3);
+		binary_node_set_satellite_data(tree, copy_succ_data);
+		binary_node_t* temp = remove_node(tree->right, copy_succ_data, compare_callback, userData1, destroyCallback, userData2, copyCallback, userData3);
+		binary_node_set_right(tree, temp);
+	}
+
+	return tree;
+}
+
+bool binary_search_tree_remove2(binary_tree_t* tree, void* value, comparer_t compare_callback, void* userData1, void (*destroyCallback)(binary_node_t*, void*), void* userData2, 
+		void* (*copyCallback)(binary_node_t*, void*), void* userData3, binary_node_t** new_root)
+{
+	binary_node_t* new_tree = remove_node(tree, value, compare_callback, userData1, destroyCallback, userData2, copyCallback, userData3);
+	if(new_tree != NULL)
+	{
+		*new_root = new_tree;
+		return true;
+	}
+	else
+	{
+		*new_root = NULL;
+		return false;
+	}
 }
 
 // Recursive solution

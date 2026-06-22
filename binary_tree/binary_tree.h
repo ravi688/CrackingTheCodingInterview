@@ -33,6 +33,7 @@ static inline binary_node_t* binary_node_get_parent(binary_node_t* node) { retur
 binary_node_t* binary_node_set_left(binary_node_t* node, binary_node_t* left);
 binary_node_t* binary_node_set_right(binary_node_t* node, binary_node_t* right);
 static inline void* binary_node_get_satellite_data(binary_node_t* node) { return node->satellite_data; }
+static inline void binary_node_set_satellite_data(binary_node_t* node, void* data) { node->satellite_data = data; }
 static inline int binary_node_get_satellite_data_as_int(binary_node_t* node) { return *(int*)node->satellite_data; }
 
 // algorithms
@@ -56,6 +57,9 @@ void binary_node_dump(binary_tree_t* tree, void (*callback)(binary_node_t* node,
 typedef int (*comparer_t)(void* value, void* compare_value, void* userData);
 #define COMPARE_CALLBACK(callback) (comparer_t)(callback)
 binary_node_t* binary_search_tree_insert(binary_tree_t* tree, void* value, comparer_t compare_callback, void* userData);
+binary_node_t* binary_search_tree_insert(binary_tree_t* tree, void* value, comparer_t compare_callback, void* userData);
 bool binary_search_tree_remove(binary_tree_t* tree, void* value, comparer_t compare_callback, void* userData1, void (*destroyCallback)(binary_node_t*, void* userData), void* userData2, binary_tree_t** new_root);
+bool binary_search_tree_remove2(binary_tree_t* tree, void* value, comparer_t compare_callback, void* userData1, void (*destroyCallback)(binary_node_t*, void* userData), void* userData2, 
+		void* (*dataCloneCallback)(binary_node_t*, void*), void* userData3, binary_tree_t** new_root);
 binary_node_t* binary_search_tree_search(binary_node_t* tree, void* value, comparer_t compare_callback, void* userData);
 binary_node_t* binary_search_tree_search2(binary_node_t* tree, void* value, comparer_t compare_callback, void* userData);

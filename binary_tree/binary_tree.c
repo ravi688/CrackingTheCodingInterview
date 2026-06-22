@@ -809,6 +809,29 @@ static binary_node_t* binary_node_get_inorder_successor(binary_node_t* node)
 		return binary_node_get_left_most(node->right);
 }
 
+// Iterative solution for inorder successor
+// Time complexity: O(n), worst case
+// Space complexity: O(1), worst case
+static binary_node_t* binary_node_get_inorder_successor2(binary_node_t* root, binary_node_t* node, comparer_t compare_callback, void* userData1)
+{
+	binary_node_t* succ = node;
+	while(root != NULL)
+	{
+		void* data1 = binary_node_get_satellite_data(root);
+		void* data2 = binary_node_get_satellite_data(node);
+		int result = compare_callback(data2, data1, userData1);
+		if(result < 0)
+		{
+			succ = root;
+			root = root->left;
+		}
+		else
+			root = root->right;
+	}
+
+	return succ;
+}
+
 bool binary_search_tree_remove(binary_tree_t* tree, void* value, comparer_t compare_callback, void* userData1, void (*destroyCallback)(binary_node_t*, void* userData), void* userData2, binary_node_t** new_root)
 {
 	binary_node_t* node = binary_search_tree_search(tree, value, compare_callback, userData1);
@@ -822,7 +845,8 @@ bool binary_search_tree_remove(binary_tree_t* tree, void* value, comparer_t comp
 		}
 		else
 		{
-			binary_node_t* successor = binary_node_get_inorder_successor(node);
+			binary_node_t* successor = binary_node_get_inorder_successor2(tree, node, compare_callback, userData1);
+			// binary_node_t* successor = binary_node_get_inorder_successor(node);
 			if(successor == node)
 			{
 				*new_root = binary_node_get_left(node);

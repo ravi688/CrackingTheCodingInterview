@@ -757,6 +757,8 @@ binary_node_t* binary_search_tree_insert(binary_tree_t* tree, void* value, compa
 	}
 }
 
+// Time complexity: O(n) => O(maximum height of the binary tree), worst case when the tree is not balanced
+// Space complexity: O(n) => O(maximum height of the binary tree), worst case when the tree is not balaced
 static binary_node_t* binary_node_get_left_most(binary_node_t* node)
 {
 	if(node->left == NULL)
@@ -764,13 +766,47 @@ static binary_node_t* binary_node_get_left_most(binary_node_t* node)
 	return binary_node_get_left_most(node->left);
 }
 
+// Tells if a node is a left child of its parents
+// If no parent exist, then it always returns false.
+static bool binary_node_is_left_child(binary_node_t* node)
+{
+	if(node->parent == NULL)
+		return false;
+	return node->parent->left == node;
+}
+
+// Tells if a node is a right child of its parent
+// If no parent exist, then it always returns false.
+static bool binary_node_is_right_child(binary_node_t* node)
+{
+	if(node->parent == NULL)
+		return false;
+	return node->parent->right == node;
+}
+
+// Time complexity: O(n) => O(maximum height of the binary tree), worst case when the tree is not balanced
+// Space complexity: O(n) => O(maximum height of the binary tree), worst case when the tree is not balanced
+static binary_node_t* binary_node_get_lowest_anscestor_on_right(binary_node_t* node)
+{
+	if(node->parent == NULL)
+		return node;
+	if(binary_node_is_left_child(node))
+		return node->parent;
+	else if(binary_node_is_right_child(node))
+		return binary_node_get_lowest_anscestor_on_right(node);
+}
+
+
+// Time complexity: O(n), worst case
+// Space complexity: O(n), worst case
 static binary_node_t* binary_node_get_inorder_successor(binary_node_t* node)
 {
+	// if there is no right subtree then the successor is the lowest anscestor for which the node lies in its subtree.
 	if(node->right == NULL)
-		return node;
-	if(node->right->left == NULL)
-		return node->right;
-	return binary_node_get_left_most(node->right->left);
+		return binary_node_get_lowest_anscestor_on_right(node);
+	// if there is right subtree then the successor is the left most node inside the right subtree.
+	else
+		return binary_node_get_left_most(node->right);
 }
 
 bool binary_search_tree_remove(binary_tree_t* tree, void* value, comparer_t compare_callback, void* userData1, void (*destroyCallback)(binary_node_t*, void* userData), void* userData2, binary_node_t** new_root)

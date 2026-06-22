@@ -114,7 +114,13 @@ int main(const char* argv[], int arg)
 	printf("BST InOrder: "); binary_node_traverse_inorder(tree, TRAVERSE_CALLBACK(print_node_as_int), NULL); puts("");
 	
 	int search_value = -1;
+	puts("----Recursive solution to BST search----");
 	if(binary_search_tree_search(tree, &search_value, COMPARE_CALLBACK(compare_ints), NULL) != NULL)
+		printf("BST contains %d\n", search_value);
+	else
+		printf("BST doesn't contain %d\n", search_value);
+	puts("----Iterative solution to BST search----");
+	if(binary_search_tree_search2(tree, &search_value, COMPARE_CALLBACK(compare_ints), NULL) != NULL)
 		printf("BST contains %d\n", search_value);
 	else
 		printf("BST doesn't contain %d\n", search_value);

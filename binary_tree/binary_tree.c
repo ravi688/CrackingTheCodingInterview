@@ -857,6 +857,9 @@ bool binary_search_tree_remove(binary_tree_t* tree, void* value, comparer_t comp
 	return false;
 }
 
+// Recursive solution
+// Time complexity: O(n) = O(number of nodes), worst case
+// Space complexity: O(n) = O(number of nodes), due to recursive calls, worst case
 binary_node_t* binary_search_tree_search(binary_node_t* tree, void* value, comparer_t compare_callback, void* userData)
 {
 	void* data = binary_node_get_satellite_data(tree);
@@ -869,4 +872,24 @@ binary_node_t* binary_search_tree_search(binary_node_t* tree, void* value, compa
 		return binary_search_tree_search(binary_node_get_right(tree), value, compare_callback, userData);
 	else
 		return NULL;
+}
+
+// Iterative Solution
+// Time complexity: O(n) = O(number of nodes), worst case
+// Space complexity: O(1), no recursive calls
+binary_node_t* binary_search_tree_search2(binary_node_t* tree, void* value, comparer_t compare_callback, void* userData)
+{
+	binary_node_t* node = tree;
+
+	int result = 0;
+	do {
+		void* data = binary_node_get_satellite_data(node);
+		result = compare_callback(value, data, userData);
+		if(result < 0)
+			node = node->left;
+		else if(result > 0)
+			node = node->right;
+	} while(result != 0 && node != NULL);
+
+	return node;
 }

@@ -58,3 +58,4 @@ typedef int (*comparer_t)(void* value, void* compare_value, void* userData);
 binary_node_t* binary_search_tree_insert(binary_tree_t* tree, void* value, comparer_t compare_callback, void* userData);
 bool binary_search_tree_remove(binary_tree_t* tree, void* value, comparer_t compare_callback, void* userData1, void (*destroyCallback)(binary_node_t*, void* userData), void* userData2, binary_tree_t** new_root);
 binary_node_t* binary_search_tree_search(binary_node_t* tree, void* value, comparer_t compare_callback, void* userData);
+binary_node_t* binary_search_tree_search2(binary_node_t* tree, void* value, comparer_t compare_callback, void* userData);

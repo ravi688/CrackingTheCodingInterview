@@ -812,6 +812,7 @@ static binary_node_t* binary_node_get_inorder_successor(binary_node_t* node)
 // Iterative solution for inorder successor
 // Time complexity: O(n), worst case
 // Space complexity: O(1), worst case
+// NOTE: Works only for binary search tree with unique values
 static binary_node_t* binary_node_get_inorder_successor2(binary_node_t* root, binary_node_t* node, comparer_t compare_callback, void* userData1)
 {
 	binary_node_t* succ = node;
@@ -832,6 +833,38 @@ static binary_node_t* binary_node_get_inorder_successor2(binary_node_t* root, bi
 	return succ;
 }
 
+static void inorder_traverse_for_successor(binary_node_t* node, binary_node_t* target, binary_node_t** succ)
+{
+	// if the sub-tree is empty or successor has been found
+	if(node == NULL || *succ != NULL)
+		// then return
+		return;
+
+	inorder_traverse_for_successor(node->left, target, succ);
+	
+	// if this node equals the target node
+	if(target == node)
+	{
+		// then the success is the node on the right of it.
+		*succ = node->right;
+		return;
+	}
+
+	inorder_traverse_for_successor(node->right, target, succ);
+}
+
+// Time complexity: O(n) = O(number of nodes)
+// Space complexity: O(n) = O(number of nodes)
+static binary_node_t* binary_node_get_inorder_successor3(binary_node_t* root, binary_node_t* node)
+{
+	// Perform inorder traversal and return the right child node of the given node (target node)
+	binary_node_t* succ = NULL;
+	inorder_traverse_for_successor(root, node, &succ);
+	if(succ == NULL)
+		succ = node;
+	return succ;
+}
+
 bool binary_search_tree_remove(binary_tree_t* tree, void* value, comparer_t compare_callback, void* userData1, void (*destroyCallback)(binary_node_t*, void* userData), void* userData2, binary_node_t** new_root)
 {
 	binary_node_t* node = binary_search_tree_search(tree, value, compare_callback, userData1);
@@ -845,7 +878,8 @@ bool binary_search_tree_remove(binary_tree_t* tree, void* value, comparer_t comp
 		}
 		else
 		{
-			binary_node_t* successor = binary_node_get_inorder_successor2(tree, node, compare_callback, userData1);
+			binary_node_t* successor = binary_node_get_inorder_successor3(tree, node);
+			// binary_node_t* successor = binary_node_get_inorder_successor2(tree, node, compare_callback, userData1);
 			// binary_node_t* successor = binary_node_get_inorder_successor(node);
 			if(successor == node)
 			{
